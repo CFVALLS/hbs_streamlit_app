@@ -9,11 +9,9 @@ import requests
 
 import seaborn as sns
 import matplotlib.pyplot as plt
-from cmg import connection as cn
+import connection as cn
 
 
-
-# hbs-dbinstance.clswfjtbfiek.sa-east-1.rds.amazonaws.com
 #############################################################
 ################### CONFIGURATION ###########################
 #############################################################
