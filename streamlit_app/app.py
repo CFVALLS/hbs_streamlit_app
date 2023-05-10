@@ -3,7 +3,6 @@ import os
 import numpy as np
 import pandas as pd
 import json
-from dotenv import load_dotenv
 import time
 from datetime import datetime
 import requests
@@ -19,7 +18,6 @@ from cmg import connection as cn
 ################### CONFIGURATION ###########################
 #############################################################
 # Esconder e importa de manera segura las creedenciales
-load_dotenv()
 
 # Credenciales mysql remoto
 DATABASE = st.secrets["AWS_MYSQL_DATABASE"]
