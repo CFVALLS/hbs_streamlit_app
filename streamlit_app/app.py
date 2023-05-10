@@ -18,12 +18,12 @@ import connection as cn
 # Esconder e importa de manera segura las creedenciales
 
 # Credenciales mysql remoto
-DATABASE = st.secrets["AWS_MYSQL_DATABASE"]
-HOST = st.secrets["AWS_MYSQL_HOST"]
-USER = st.secrets["AWS_MYSQL_USER"]
-PASSWORD = st.secrets["AWS_MYSQL_USER_PASSWORD"]
-PORT = st.secrets["AWS_MYSQL_PORT"]
-USER_KEY = st.secrets["COORDINADOR_USER_KEY"]
+DATABASE = st.secrets["AWS_MYSQL"]["DATABASE"]
+HOST = st.secrets["AWS_MYSQL"]["HOST"]
+USER = st.secrets["AWS_MYSQL"]["USER"]
+PASSWORD = st.secrets["AWS_MYSQL"]["USER_PASSWORD"]
+PORT = st.secrets["AWS_MYSQL"]["PORT"]
+USER_KEY = st.secrets["COORDINADOR"]["USER_KEY"]
 
 # Establecer motor de base de datos
 engine, metadata = cn.establecer_engine(
