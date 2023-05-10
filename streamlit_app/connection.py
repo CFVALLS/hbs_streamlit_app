@@ -158,8 +158,8 @@ def establecer_engine(database_in, user_in, password_in, host_in, port_in, verbo
         metadata: objeto de metadata para la base de datos
     """
     try:
-        #connection_string = f"mysql+mysqlconnector://{user_in}:{password_in}@{host_in}:{port_in}/{database_in}"
-        connection_string = f'mysql://{user_in}:{password_in}@{host_in}:{port_in}/{database_in}'
+        connection_string = f"mysql+mysqlconnector://{user_in}:{password_in}@{host_in}:{port_in}/{database_in}"
+        #connection_string = f'mysql://{user_in}:{password_in}@{host_in}:{port_in}/{database_in}'
 
         engine = create_engine(
             connection_string,
