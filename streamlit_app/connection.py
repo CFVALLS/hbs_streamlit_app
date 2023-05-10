@@ -9,7 +9,6 @@ import logging
 import os
 import numpy as np
 import pandas as pd
-from dotenv import load_dotenv
 from datetime import timedelta
 
 # mysql
@@ -28,21 +27,9 @@ from sqlalchemy.orm.exc import NoResultFound
 ###################           Settings         ##########################
 #########################################################################
 
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-log_dir = os.path.join(parent_dir, 'log')
-connection_path = os.path.join(log_dir, 'connection.log')
-
-# configuracion de logging
-logging.basicConfig(filename=connection_path, level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%m-%Y %H:%M:%S')
-
-# load environment variables from .env file
-try:
-    load_dotenv()
-    logging.info("Environment variables loaded successfully")
-
-except Exception as error:
-    logging.error(f"Error loading environment variables: {error}")
+# parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# log_dir = os.path.join(parent_dir, 'log')
+# connection_path = os.path.join(log_dir, 'connection.log')
 
 #########################################################################
 ##############                Classes                 ###################
