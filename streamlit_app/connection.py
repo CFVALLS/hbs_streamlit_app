@@ -24,10 +24,6 @@ from sqlalchemy import Column, Integer, String, Boolean, Text, DECIMAL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
 
-# mis modulos
-from cmg import screener
-
-
 #########################################################################
 ###################           Settings         ##########################
 #########################################################################
