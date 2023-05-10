@@ -22,12 +22,12 @@ from cmg import connection as cn
 load_dotenv()
 
 # Credenciales mysql remoto
-DATABASE = os.environ.get('AWS_MYSQL_DATABASE')
-HOST = os.environ.get("AWS_MYSQL_HOST")
-USER = os.environ.get("AWS_MYSQL_USER")
-PASSWORD = os.environ.get("AWS_MYSQL_USER_PASSWORD")
-PORT = os.environ.get("AWS_MYSQL_PORT")
-USER_KEY = os.environ.get("COORDINADOR_USER_KEY")
+DATABASE = st.secrets["AWS_MYSQL_DATABASE"]
+HOST = st.secrets["AWS_MYSQL_HOST"]
+USER = st.secrets["AWS_MYSQL_USER"]
+PASSWORD = st.secrets["AWS_MYSQL_USER_PASSWORD"]
+PORT = st.secrets["AWS_MYSQL_PORT"]
+USER_KEY = st.secrets["COORDINADOR_USER_KEY"]
 
 # Establecer motor de base de datos
 engine, metadata = cn.establecer_engine(
