@@ -3,3 +3,8 @@ numpy
 matplotlib
 scipy
 requests
+json
+time
+datetime
+seaborn
+matplotlib.pyplot
