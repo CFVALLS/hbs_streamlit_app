@@ -145,8 +145,8 @@ with cn.establecer_session(engine) as session:
 
     # consulta estado central 
     # [227, 'Los Angeles', False, Decimal('5.5000'), Decimal('0.1166'), Decimal('7.2000'), Decimal('84.640'), '2023-04', Decimal('146.649'), '11.05.23 13:50:42', Decimal('-25.000'), Decimal('10.700')]
-    last_row_la = query_last_row_central(session, 'Los Angeles') 
-    last_row_q = query_last_row_central(session, 'Quillota')
+    last_row_la = cn.query_last_row_central(session, 'Los Angeles') 
+    last_row_q = cn.query_last_row_central(session, 'Quillota')
 
     estado_generacion_la =  last_row_la[2]
     estado_generacion_q = last_row_q[2]
