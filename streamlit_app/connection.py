@@ -549,6 +549,24 @@ def query_cmg_ponderado_by_time(session_in, unixtime, delta_hours=48):
         logging.error(f"Error while getting cmg_ponderado entries: {e}")
         return None
     
+def query_last_row_central(session_in, name_central):
+    """
+    Retrieves the last entry from the 'central' table based on the provided name.
+
+    Args:
+        session (sqlalchemy.orm.session.Session): SQLAlchemy Session object.
+        name (str): The name to search for in the 'central' table.
+
+    Returns:
+        CentralTable: The last entry matching the provided name, or None if not found.
+    """
+    try:
+        last_entry = session_in.query(CentralTable).filter_by(nombre=name_central).order_by(desc(CentralTable.id)).first()
+        return last_entry.as_list() if last_entry is not None else None
+    except Exception as e:
+        logging.error(f"Error while getting last entry by name: {e}")
+        return None
+
 ##################################################################################
 ##################### FUNCION PARA sintetizar subrutinas #########################
 ##################################################################################

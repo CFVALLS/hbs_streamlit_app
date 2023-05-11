@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import json
 import time
+import pytz
+
 from datetime import datetime
 import requests
 
@@ -34,17 +36,24 @@ CONN_STATUS = engine is not None
 st.set_page_config(layout="wide")
 
 # Get date in format YYYY-MM-DD and current hour
-now = datetime.now()
-fecha = now.strftime("%Y-%m-%d")
+
+# Specify the timezone for Chile
+chile_tz = pytz.timezone('America/Santiago')
+
+# Create a datetime object in Chile's timezone
+chile_datetime = datetime.now(chile_tz)
+
+fecha = chile_datetime.strftime("%Y-%m-%d")
 print(fecha)
-hora = now.strftime("%H:%M:%S")
+hora = chile_datetime.strftime("%H:%M:%S")
+print(hora)
 
 # round hora to nearest hour
 hora = hora.split(':')
 hora_redondeada = f'{hora[0]}:00:00'
 
 # get unixtime from datetime. 
-unixtime = int(time.mktime(now.timetuple()))
+unixtime = int(time.mktime(chile_datetime.timetuple()))
 
 def get_json_costo_marginal_online(fecha_gte, fecha_lte, barras, user_key=USER_KEY , verbose=False):
     """ Realiza un request para obtener costos marginales de las barras ingresadas. Devuelve una lista de diccionarios con
@@ -134,6 +143,15 @@ with cn.establecer_session(engine) as session:
     cmg_ponderado_48h = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, 72))
     cmg_ponderado_48h['timestamp'] = pd.to_datetime(cmg_ponderado_48h["timestamp"], format="%d.%m.%y %H:%M:%S")
 
+    # consulta estado central 
+    # [227, 'Los Angeles', False, Decimal('5.5000'), Decimal('0.1166'), Decimal('7.2000'), Decimal('84.640'), '2023-04', Decimal('146.649'), '11.05.23 13:50:42', Decimal('-25.000'), Decimal('10.700')]
+    last_row_la = query_last_row_central(session, 'Los Angeles') 
+    last_row_q = query_last_row_central(session, 'Quillota')
+
+    estado_generacion_la =  last_row_la[2]
+    estado_generacion_q = last_row_q[2]
+
+
 ############# Queries externas #############
 cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, barras=['Quillota' , 'Charrua'], hora_in=hora_redondeada, user_key=USER_KEY)
 
@@ -154,6 +172,14 @@ with col1:
     # CHARRUA
     COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
     st.markdown(COL1_TITLE, unsafe_allow_html=True)
+
+    if last_row_la:
+        GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1.5rem;"> GENERANDO </p>'
+    else:
+        GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
+
+    st.markdown(GENERANDO_LA, unsafe_allow_html=True)
+
     st.markdown("""<hr style="height:5px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
@@ -162,9 +188,6 @@ with col1:
     st.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
     st.metric("Central referencia", central_referencia_charrua)
 
-
-    GRAFICO_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1rem;"> CMG grafico </p>'
-    st.markdown(GRAFICO_TITLE, unsafe_allow_html=True)
 
 with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
@@ -176,6 +199,13 @@ with col2:
     st.metric("Costo marginal calculado", float(cmg_quillota))
     st.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
     st.metric("Central referencia", central_referencia_quillota)
+
+    if last_row_q:
+        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1.5rem;"> GENERANDO </p>'
+    else:
+        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
+
+    st.markdown(GENERANDO_Q, unsafe_allow_html=True)
 
 ################## GRAFICO ##################
 

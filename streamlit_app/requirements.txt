@@ -2,6 +2,7 @@
 numpy
 seaborn
 pandas
+pytz
 python-dateutil==2.8.2
 requests==2.28.1
 sqlalchemy==1.4.39
