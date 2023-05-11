@@ -151,6 +151,9 @@ with cn.establecer_session(engine) as session:
     estado_generacion_la =  last_row_la[2]
     estado_generacion_q = last_row_q[2]
 
+    costo_operacional_la = last_row_la[8]
+    costo_operacional_q = last_row_q[8]
+
 
 ############# Queries externas #############
 cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, barras=['Quillota' , 'Charrua'], hora_in=hora_redondeada, user_key=USER_KEY)
@@ -183,10 +186,13 @@ with col1:
     st.markdown("""<hr style="height:5px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
-    st.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-    st.metric("Costo marginal calculado", float(cmg_charrua))
-    st.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
-    st.metric("Central referencia", central_referencia_charrua)
+    m1, m2  = st.columns(2)
+    m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
+    m2.metric("Costo marginal calculado", float(cmg_charrua))
+
+    m3, m4  = st.columns(2)
+    m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
+    m4.metric("Central referencia", central_referencia_charrua)
 
 
 with col2:
