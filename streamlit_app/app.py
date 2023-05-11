@@ -240,7 +240,10 @@ with st.container():
         # Create the Seaborn lineplot
         plt.figure(figsize=(10, 6))
         sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
-
+        
+        # add two horizontal lines
+        plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
+        plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
         # Set plot title and labels
         plt.title("CMG vs Timestamp")
         plt.xlabel("Timestamp")
