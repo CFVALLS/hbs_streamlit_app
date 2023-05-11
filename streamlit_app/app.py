@@ -174,9 +174,9 @@ with col1:
     st.markdown(COL1_TITLE, unsafe_allow_html=True)
 
     if last_row_la:
-        GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1.5rem;"> GENERANDO </p>'
-    else:
         GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
+    else:
+        GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
 
     st.markdown(GENERANDO_LA, unsafe_allow_html=True)
 
@@ -192,6 +192,14 @@ with col1:
 with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
     st.markdown(COL2_TITLE, unsafe_allow_html=True)
+
+    if last_row_q:
+        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
+    else:
+        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
+
+    st.markdown(GENERANDO_Q, unsafe_allow_html=True)
+
     st.markdown("""<hr style="height:5px;border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
@@ -200,12 +208,7 @@ with col2:
     st.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
     st.metric("Central referencia", central_referencia_quillota)
 
-    if last_row_q:
-        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1.5rem;"> GENERANDO </p>'
-    else:
-        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
 
-    st.markdown(GENERANDO_Q, unsafe_allow_html=True)
 
 ################## GRAFICO ##################
 
