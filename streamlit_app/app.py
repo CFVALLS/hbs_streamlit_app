@@ -151,8 +151,8 @@ with cn.establecer_session(engine) as session:
     estado_generacion_la =  last_row_la[2]
     estado_generacion_q = last_row_q[2]
 
-    costo_operacional_la = last_row_la[8]
-    costo_operacional_q = last_row_q[8]
+    costo_operacional_la = float(last_row_la[8])
+    costo_operacional_q = float(last_row_q[8])
 
 
 ############# Queries externas #############
@@ -194,6 +194,8 @@ with col1:
     m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
     m4.metric("Central referencia", central_referencia_charrua)
 
+    st.metric("Costo Operacional -", costo_operacional_la)
+
 
 with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
@@ -209,10 +211,15 @@ with col2:
     st.markdown("""<hr style="height:5px;border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
-    st.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-    st.metric("Costo marginal calculado", float(cmg_quillota))
-    st.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
-    st.metric("Central referencia", central_referencia_quillota)
+    m1, m2  = st.columns(2)
+    m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
+    m2.metric("Costo marginal calculado", float(cmg_quillota))
+
+    m3, m4  = st.columns(2)
+    m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
+    m4.metric("Central referencia", central_referencia_quillota)
+
+    st.metric("Costo Operacional -", costo_operacional_q)
 
 
 
