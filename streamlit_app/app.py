@@ -176,7 +176,7 @@ with col1:
     COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
     st.markdown(COL1_TITLE, unsafe_allow_html=True)
 
-    if last_row_la:
+    if estado_generacion_la:
         GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
     else:
         GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
@@ -201,7 +201,7 @@ with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
     st.markdown(COL2_TITLE, unsafe_allow_html=True)
 
-    if last_row_q:
+    if estado_generacion_q:
         GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
     else:
         GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
