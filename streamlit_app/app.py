@@ -161,8 +161,8 @@ with cn.establecer_session(engine) as session:
 
     # Consultar ultimas entradas de table Central: 
 
-    df = cn.query_central_table(session)
-    print(df.head())
+    df_central = cn.query_central_table(session)
+
 
 
 ############# Queries externas #############
@@ -268,32 +268,9 @@ with col2:
 ################## GRAFICO ##################
 
 with st.container():
-    
-    st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
+
+        st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
-        st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
-
-    with col2:
-
-        # # Create the Seaborn lineplot
-        # plt.figure(figsize=(10, 6))
-        # sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
-        
-        # # add two horizontal lines
-        # plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
-        # plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
-        # # Set plot title and labels
-        # plt.title("CMG vs Timestamp")
-        # plt.xlabel("Timestamp")
-        # plt.ylabel("CMG")
-
-        # # Show the plot
-        # st.pyplot(plt.gcf())
 
         # Create the Seaborn lineplot
         plt.figure(figsize=(10, 6))
@@ -313,6 +290,21 @@ with st.container():
 
         # Show the plot
         st.pyplot(plt.gcf())
+    
+
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
+        st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
+
+    with col2:
+        st.write('Ultimos movimientos Encendido/Apagado')
+        st.dataframe(df_central, use_container_width=True)
+
+
+
 
 
 
