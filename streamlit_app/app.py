@@ -161,7 +161,7 @@ with cn.establecer_session(engine) as session:
 
     # Consultar ultimas entradas de table Central: 
 
-    df_central = cn.query_central_table(session)
+    df_central = cn.query_central_table(session, num_entries= 10 )
 
 
 
@@ -272,24 +272,27 @@ with st.container():
         st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
-        # Create the Seaborn lineplot
-        plt.figure(figsize=(10, 6))
-        sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
-        
-        # add two horizontal lines
-        plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
-        plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+        col_left, col_center, col_right = st.columns([1,4,1])
 
-        # Manually add the legend
-        plt.legend()
+        with col_center:
 
-        # Set plot title and labels
-        plt.title("CMG vs Timestamp")
-        plt.xlabel("Timestamp")
-        plt.ylabel("CMG")
+            # Create the Seaborn lineplot
+            plt.figure(figsize=(10, 6))
+            sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
+            
+            # add two horizontal lines
+            plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
+            plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
 
-        # Show the plot
-        st.pyplot(plt.gcf())
+            # Manually add the legend
+            plt.legend()
+
+            # Set plot title and labels
+            plt.xlabel("Timestamp")
+            plt.ylabel("CMG")
+
+            # Show the plot
+            st.pyplot(plt.gcf())
     
 
         col1, col2 = st.columns((1, 1))
