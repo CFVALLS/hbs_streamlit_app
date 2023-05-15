@@ -292,15 +292,15 @@ with st.container():
         st.pyplot(plt.gcf())
     
 
-    col1, col2 = st.columns((1, 1))
+        col1, col2 = st.columns((1, 1))
 
-    with col1:
-        st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
-        st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
+        with col1:
+            st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
+            st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
 
-    with col2:
-        st.write('Ultimos movimientos Encendido/Apagado')
-        st.dataframe(df_central, use_container_width=True)
+        with col2:
+            st.write('Ultimos movimientos Encendido/Apagado')
+            st.dataframe(df_central, use_container_width=True)
 
 
 
