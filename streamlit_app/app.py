@@ -138,6 +138,9 @@ with cn.establecer_session(engine) as session:
         session, barra_transmision='CHARRUA__220')
     central_referencia_quillota, afecto_desacople_quillota, cmg_quillota = cn.query_values_last_desacople_bool(
         session, barra_transmision='QUILLOTA__220')
+
+    cmg_charrua = round(float(cmg_charrua) , 1)
+    cmg_quillota = round(float(cmg_quillota) , 1)
     
     # consulta de datos cmg_ponderado 48 horas previas
     cmg_ponderado_48h = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, 72))
@@ -151,11 +154,12 @@ with cn.establecer_session(engine) as session:
     estado_generacion_la =  last_row_la[2]
     estado_generacion_q = last_row_q[2]
 
-    costo_operacional_la = float(last_row_la[8])
-    costo_operacional_q = float(last_row_q[8])
+    costo_operacional_la = round(float(last_row_la[8]),1)
+    costo_operacional_q = round(float(last_row_q[8]),1)
 
 
 ############# Queries externas #############
+
 cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, barras=['Quillota' , 'Charrua'], hora_in=hora_redondeada, user_key=USER_KEY)
 
 # check if cmg_online is empty
@@ -166,6 +170,20 @@ if not cmg_online:
 #########################################################
 ################### WEBSITE DESIGN ######################
 #########################################################
+
+################# Header #################
+
+col_a, col_b = st.columns((1, 2))
+
+with col_a:
+
+    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
+    st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
+    st.markdown("""<hr style="height:2px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
+
+
+
+
 
 ################## TITLE ##################
 
@@ -183,12 +201,15 @@ with col1:
 
     st.markdown(GENERANDO_LA, unsafe_allow_html=True)
 
+    cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:2rem;"> CMG Calculado - {cmg_charrua} </p>'
+    st.markdown(cmg_calculado_charrua, unsafe_allow_html=True)
+
     st.markdown("""<hr style="height:5px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-    m2.metric("Costo marginal calculado", float(cmg_charrua))
+    m2.metric("Costo marginal calculado", cmg_charrua)
 
     m3, m4  = st.columns(2)
     m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
@@ -207,13 +228,16 @@ with col2:
         GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
 
     st.markdown(GENERANDO_Q, unsafe_allow_html=True)
+        
+    cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:2rem;"> CMG Calculado - {cmg_quillota} </p>'
+    st.markdown(cmg_calculado_quillota, unsafe_allow_html=True)
 
     st.markdown("""<hr style="height:5px;border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-    m2.metric("Costo marginal calculado", float(cmg_quillota))
+    m2.metric("Costo marginal calculado", cmg_quillota)
 
     m3, m4  = st.columns(2)
     m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
