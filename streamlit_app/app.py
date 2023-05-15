@@ -145,6 +145,7 @@ with cn.establecer_session(engine) as session:
     # consulta de datos cmg_ponderado 48 horas previas
     cmg_ponderado_48h = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, 72))
     cmg_ponderado_48h['timestamp'] = pd.to_datetime(cmg_ponderado_48h["timestamp"], format="%d.%m.%y %H:%M:%S")
+    cmg_ponderado_48h.drop(['unix_time'], axis=1, inplace=True)
 
     # consulta estado central 
     # [227, 'Los Angeles', False, Decimal('5.5000'), Decimal('0.1166'), Decimal('7.2000'), Decimal('84.640'), '2023-04', Decimal('146.649'), '11.05.23 13:50:42', Decimal('-25.000'), Decimal('10.700')]
@@ -177,10 +178,17 @@ col_a, col_b = st.columns((1, 2))
 
 with col_a:
 
-    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
+    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.5rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
     st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
-    st.markdown("""<hr style="height:2px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
+    st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
 
+
+    if CONN_STATUS:
+        CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Green; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
+    else:
+        CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Red; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
+
+    st.markdown(CONNECTION_MD, unsafe_allow_html=True)
 
 
 
@@ -189,6 +197,8 @@ with col_a:
 
 col1, col2 = st.columns((1, 1))
 
+
+################## DATOS Charrua - Los Angeles ##############################################
 with col1:
     # CHARRUA
     COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
@@ -201,11 +211,17 @@ with col1:
 
     st.markdown(GENERANDO_LA, unsafe_allow_html=True)
 
-    cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:2rem;"> CMG Calculado - {cmg_charrua} </p>'
-    st.markdown(cmg_calculado_charrua, unsafe_allow_html=True)
+    col1_1, col2_1 = st.columns((1, 1))
 
-    st.markdown("""<hr style="height:5px; border:none;color:#333;background-color:#333;" /> """,
-                unsafe_allow_html=True)
+    with col1_1:
+
+        str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_charrua} </p>'
+        st.markdown(str_cmg_calculado_charrua, unsafe_allow_html=True)
+
+    with col2_1:
+        str_co_la= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> Costo Operacional - {costo_operacional_la} </p>'
+        st.markdown(str_co_la, unsafe_allow_html=True)
+
 
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
@@ -215,9 +231,8 @@ with col1:
     m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
     m4.metric("Central referencia", central_referencia_charrua)
 
-    st.metric("Costo Operacional -", costo_operacional_la)
 
-
+################## DATOS Charrua - Los Angeles ##############################################
 with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
     st.markdown(COL2_TITLE, unsafe_allow_html=True)
@@ -229,11 +244,9 @@ with col2:
 
     st.markdown(GENERANDO_Q, unsafe_allow_html=True)
         
-    cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:2rem;"> CMG Calculado - {cmg_quillota} </p>'
+    cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_quillota} </p>'
     st.markdown(cmg_calculado_quillota, unsafe_allow_html=True)
 
-    st.markdown("""<hr style="height:5px;border:none;color:#333;background-color:#333;" /> """,
-                unsafe_allow_html=True)
 
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
@@ -251,8 +264,9 @@ with col2:
 
 with st.container():
     
-    st.markdown("""<hr style="height:2px; border:none;color:#333;background-color:#333;" /> """,
+    st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -289,11 +303,6 @@ with st.container():
     STATUS_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1rem;"> Datos Actuales </p>'
     st.markdown(STATUS_TITLE, unsafe_allow_html=True)
 
-    if CONN_STATUS:
-        CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Green; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
-    else:
-        CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Red; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
-    st.markdown(CONNECTION_MD, unsafe_allow_html=True)
 
     TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
     st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
