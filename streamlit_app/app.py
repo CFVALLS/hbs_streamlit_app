@@ -159,6 +159,12 @@ with cn.establecer_session(engine) as session:
     costo_operacional_q = round(float(last_row_q[8]),1)
 
 
+    # Consultar ultimas entradas de table Central: 
+
+    df = cn.query_central_table(session)
+    print(df.head())
+
+
 ############# Queries externas #############
 
 cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, barras=['Quillota' , 'Charrua'], hora_in=hora_redondeada, user_key=USER_KEY)
@@ -224,14 +230,11 @@ with col1:
 
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-    m2.metric("Costo marginal calculado", cmg_charrua)
-
-    m3, m4  = st.columns(2)
-    m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
-    m4.metric("Central referencia", central_referencia_charrua)
+    m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
+    st.metric("Central referencia", central_referencia_charrua)
 
 
-################## DATOS Charrua - Los Angeles ##############################################
+################## DATOS Quillota ##############################################
 
 with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
@@ -255,17 +258,11 @@ with col2:
         str_co_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> Costo Operacional - {costo_operacional_q} </p>'
         st.markdown(str_co_quillota, unsafe_allow_html=True)
 
-    
+   
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-    m2.metric("Costo marginal calculado", cmg_quillota)
-
-    m3, m4  = st.columns(2)
-    m3.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
-    m4.metric("Central referencia", central_referencia_quillota)
-
-    st.metric("Costo Operacional -", costo_operacional_q)
-
+    m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
+    st.metric("Central referencia", central_referencia_quillota)
 
 
 ################## GRAFICO ##################
@@ -278,10 +275,25 @@ with st.container():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write('Tracking cmg_ponderado - DataFrame:')
+        st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
         st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
 
     with col2:
+
+        # # Create the Seaborn lineplot
+        # plt.figure(figsize=(10, 6))
+        # sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
+        
+        # # add two horizontal lines
+        # plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
+        # plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+        # # Set plot title and labels
+        # plt.title("CMG vs Timestamp")
+        # plt.xlabel("Timestamp")
+        # plt.ylabel("CMG")
+
+        # # Show the plot
+        # st.pyplot(plt.gcf())
 
         # Create the Seaborn lineplot
         plt.figure(figsize=(10, 6))
@@ -290,6 +302,10 @@ with st.container():
         # add two horizontal lines
         plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
         plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+
+        # Manually add the legend
+        plt.legend()
+
         # Set plot title and labels
         plt.title("CMG vs Timestamp")
         plt.xlabel("Timestamp")
@@ -297,6 +313,7 @@ with st.container():
 
         # Show the plot
         st.pyplot(plt.gcf())
+
 
 
 ################## footer ##################

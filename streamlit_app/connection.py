@@ -566,6 +566,30 @@ def query_last_row_central(session_in, name_central):
     except Exception as e:
         logging.error(f"Error while getting last entry by name: {e}")
         return None
+def query_central_table(session_in, num_entries=6):
+    """
+    Retrieves the specified number of entries from the 'central' table.
+
+    Args:
+        session_in (sqlalchemy.orm.session.Session): SQLAlchemy Session object.
+        num_entries (int): Number of entries to retrieve.
+
+    Returns:
+        pd.DataFrame: DataFrame containing the retrieved entries.
+    """
+    try:
+        query = session_in.query(CentralTable).order_by(desc(CentralTable.id)).limit(num_entries)
+        entries = query.all()
+        if entries:
+            data = [entry.as_list() for entry in entries]
+            df = pd.DataFrame(data, columns=CentralTable.__table__.columns.keys())
+            return df
+        else:
+            return pd.DataFrame()
+    except Exception as e:
+        logging.error(f"Error while retrieving entries from 'central' table: {e}")
+        return None
+
 
 ##################################################################################
 ##################### FUNCION PARA sintetizar subrutinas #########################
@@ -684,7 +708,6 @@ def registro_inicio_hora(auth, path, session_in, barra_transmision, timestamp_cu
 
 if __name__ == "__main__":
 
-    print(connection_path)
 
     # host = os.environ.get("MYSQL_HOST")
     # database = os.environ.get("MYSQL_DATABASE")
