@@ -292,8 +292,7 @@ with st.container():
         st.pyplot(plt.gcf())
     
 
-
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns((1, 1))
 
     with col1:
         st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
