@@ -180,8 +180,6 @@ with col_a:
 
     TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.5rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
     st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
-    st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
-
 
     if CONN_STATUS:
         CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Green; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
@@ -190,17 +188,18 @@ with col_a:
 
     st.markdown(CONNECTION_MD, unsafe_allow_html=True)
 
+    st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
 
 
 
-################## TITLE ##################
+
+################## Body ##################
 
 col1, col2 = st.columns((1, 1))
 
 
 ################## DATOS Charrua - Los Angeles ##############################################
 with col1:
-    # CHARRUA
     COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
     st.markdown(COL1_TITLE, unsafe_allow_html=True)
 
@@ -233,6 +232,7 @@ with col1:
 
 
 ################## DATOS Charrua - Los Angeles ##############################################
+
 with col2:
     COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
     st.markdown(COL2_TITLE, unsafe_allow_html=True)
@@ -243,11 +243,19 @@ with col2:
         GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
 
     st.markdown(GENERANDO_Q, unsafe_allow_html=True)
-        
-    cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_quillota} </p>'
-    st.markdown(cmg_calculado_quillota, unsafe_allow_html=True)
 
+    col1_1, col2_1 = st.columns((1, 1))
 
+    with col1_1:
+
+        str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_quillota} </p>'
+        st.markdown(str_cmg_calculado_quillota, unsafe_allow_html=True)
+
+    with col2_1:
+        str_co_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> Costo Operacional - {costo_operacional_q} </p>'
+        st.markdown(str_co_quillota, unsafe_allow_html=True)
+
+    
     m1, m2  = st.columns(2)
     m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
     m2.metric("Costo marginal calculado", cmg_quillota)
