@@ -5,7 +5,6 @@ Description: Script para establecer conexion con base de datos MySQL
 """
 
 # general modules
-import logging
 import os
 import numpy as np
 import pandas as pd
@@ -566,6 +565,7 @@ def query_last_row_central(session_in, name_central):
     except Exception as e:
         logging.error(f"Error while getting last entry by name: {e}")
         return None
+
 def query_central_table(session_in, num_entries=6):
     """
     Retrieves the specified number of entries from the 'central' table.
@@ -586,6 +586,7 @@ def query_central_table(session_in, num_entries=6):
             return df
         else:
             return pd.DataFrame()
+
     except Exception as e:
         logging.error(f"Error while retrieving entries from 'central' table: {e}")
         return None
@@ -708,7 +709,7 @@ def registro_inicio_hora(auth, path, session_in, barra_transmision, timestamp_cu
 
 if __name__ == "__main__":
 
-
+    print('helo')
     # host = os.environ.get("MYSQL_HOST")
     # database = os.environ.get("MYSQL_DATABASE")
     # user = os.environ.get("MYSQL_USER")
