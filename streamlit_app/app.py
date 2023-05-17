@@ -185,14 +185,18 @@ col_a, col_b = st.columns((1, 2))
 
 with col_a:
 
-    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Actualizacion: {ultimo_tracking} - Ultima Modificacion RIO.xls: {ultimo_mod_rio}</a></p>'
+    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Actualizacion: {ultimo_tracking}</a></p>'
     st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
 
     if CONN_STATUS:
         CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Green; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
     else:
         CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Red; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
+    
+    TRACKING_RIO = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Modificacion RIO.xls: {ultimo_mod_rio}</a></p>'
 
+    st.markdown(TRACKING_RIO, unsafe_allow_html=True)
+    
     st.markdown(CONNECTION_MD, unsafe_allow_html=True)
 
     st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
