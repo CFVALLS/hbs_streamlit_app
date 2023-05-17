@@ -132,6 +132,7 @@ with cn.establecer_session(engine) as session:
     # last row tracking_cmg
     tracking_cmg_last_row = cn.query_last_ins_tracking_coordinador(session)
     ultimo_tracking = tracking_cmg_last_row[1]
+    ultimo_mod_rio = tracking_cmg_last_row[3]
 
     # get last entry cmg_tiempo_real , afecto_desacople, central_referencia
     central_referencia_charrua, afecto_desacople_charrua, cmg_charrua = cn.query_values_last_desacople_bool(
@@ -184,7 +185,7 @@ col_a, col_b = st.columns((1, 2))
 
 with col_a:
 
-    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.5rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
+    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Actualizacion: {ultimo_tracking} - Ultima Modificacion RIO.xls: {ultimo_mod_rio}</a></p>'
     st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
 
     if CONN_STATUS:
@@ -224,7 +225,7 @@ with col1:
         st.markdown(str_cmg_calculado_charrua, unsafe_allow_html=True)
 
     with col2_1:
-        str_co_la= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> Costo Operacional - {costo_operacional_la} </p>'
+        str_co_la= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_la} </p>'
         st.markdown(str_co_la, unsafe_allow_html=True)
 
 
@@ -255,7 +256,7 @@ with col2:
         st.markdown(str_cmg_calculado_quillota, unsafe_allow_html=True)
 
     with col2_1:
-        str_co_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> Costo Operacional - {costo_operacional_q} </p>'
+        str_co_quillota= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_q} </p>'
         st.markdown(str_co_quillota, unsafe_allow_html=True)
 
    
@@ -319,11 +320,3 @@ with st.container():
     HEADER_TITLE = '<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Blue; font-size:1rem;"> <a href="https://github.com/CFVALLS">Author: Cristian Valls </a></p>'
     st.markdown(HEADER_TITLE, unsafe_allow_html=True)
 
-    STATUS_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:1rem;"> Datos Actuales </p>'
-    st.markdown(STATUS_TITLE, unsafe_allow_html=True)
-
-
-    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1rem;"> Ultima consulta: {ultimo_tracking} </a></p>'
-    st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
-    st.markdown("""<hr style="height:2px; border:none;color:#333;background-color:#333;" /> """,
-                unsafe_allow_html=True)
