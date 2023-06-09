@@ -398,18 +398,11 @@ with tab2:
                 margen_garantia = st.number_input('Margen Garantia [ej: -25.0]:', value = 0.0)
                 dict_data['margen_garantia'] = margen_garantia
 
-
   
         if st.button('Submit'):
-            data = dict_data
             st.write(data)
-            insert_central(name_central= central_seleccion, data, host=API_HOST, port=API_PORT)
+            insert_central(central_seleccion, dict_data, host=API_HOST, port=API_PORT)
             st.write(f'Atributos de central {central_seleccion} modificados')
-
-
-
-
-
 
 
 ################## footer ##################
