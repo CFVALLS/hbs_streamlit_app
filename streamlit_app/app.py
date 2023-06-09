@@ -27,6 +27,11 @@ PASSWORD = st.secrets["AWS_MYSQL"]["USER_PASSWORD"]
 PORT = st.secrets["AWS_MYSQL"]["PORT"]
 USER_KEY = st.secrets["COORDINADOR"]["USER_KEY"]
 
+#Informacion API flask
+API_HOST = st.secrets["API"]["HOST"]
+API_PORT = st.secrets["API"]["PORT"]
+
+
 # Establecer motor de base de datos
 engine, metadata = cn.establecer_engine(
     DATABASE, USER, PASSWORD, HOST, PORT, verbose=True)
@@ -124,6 +129,25 @@ def get_costo_marginal_online_hora(fecha_gte, fecha_lte, barras, hora_in, user_k
 
     return out_dict
 
+def get_central(name_central, host=API_HOST, port=API_PORT):
+    url = f"http://{API_HOST}:{API_PORT}/central/{name_central}"
+    
+    try:
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 404:
+            return {"error": "No central entries found"}
+        else:
+            return {"error": "Failed to retrieve central entry"}
+            
+    except requests.RequestException as e:
+        return {"error": f"Request failed: {e}"}
+
+
+
+
 #############################################################
 ###################  Consultas    ###########################
 #############################################################
@@ -179,139 +203,172 @@ if not cmg_online:
 ################### WEBSITE DESIGN ######################
 #########################################################
 
-################# Header #################
 
-col_a, col_b = st.columns((1, 2))
+with tab1:
+   st.header("Monitoreo")
+    ################# Header #################
 
-with col_a:
+    col_a, col_b = st.columns((1, 2))
 
-    TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Actualizacion: {ultimo_tracking}</a></p>'
-    st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
+    with col_a:
 
-    if CONN_STATUS:
-        CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Green; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
-    else:
-        CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Red; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
-    
-    TRACKING_RIO = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Modificacion RIO.xls: {ultimo_mod_rio}</a></p>'
+        TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Actualizacion: {ultimo_tracking}</a></p>'
+        st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
 
-    st.markdown(TRACKING_RIO, unsafe_allow_html=True)
-    
-    st.markdown(CONNECTION_MD, unsafe_allow_html=True)
+        if CONN_STATUS:
+            CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Green; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
+        else:
+            CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Red; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
+        
+        TRACKING_RIO = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Modificacion RIO.xls: {ultimo_mod_rio}</a></p>'
 
-    st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
+        st.markdown(TRACKING_RIO, unsafe_allow_html=True)
+        
+        st.markdown(CONNECTION_MD, unsafe_allow_html=True)
 
-
-
-
-################## Body ##################
-
-col1, col2 = st.columns((1, 1))
+        st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
 
 
-################## DATOS Charrua - Los Angeles ##############################################
-with col1:
-    COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
-    st.markdown(COL1_TITLE, unsafe_allow_html=True)
-
-    if estado_generacion_la:
-        GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
-    else:
-        GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
-
-    st.markdown(GENERANDO_LA, unsafe_allow_html=True)
-
-    col1_1, col2_1 = st.columns((1, 1))
-
-    with col1_1:
-
-        str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_charrua} </p>'
-        st.markdown(str_cmg_calculado_charrua, unsafe_allow_html=True)
-
-    with col2_1:
-        str_co_la= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_la} </p>'
-        st.markdown(str_co_la, unsafe_allow_html=True)
 
 
-    m1, m2  = st.columns(2)
-    m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-    m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
-    st.metric("Central referencia", central_referencia_charrua)
+    ################## Body ##################
+
+    col1, col2 = st.columns((1, 1))
 
 
-################## DATOS Quillota ##############################################
+    ################## DATOS Charrua - Los Angeles ##############################################
+    with col1:
+        COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
+        st.markdown(COL1_TITLE, unsafe_allow_html=True)
 
-with col2:
-    COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
-    st.markdown(COL2_TITLE, unsafe_allow_html=True)
+        if estado_generacion_la:
+            GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
+        else:
+            GENERANDO_LA = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
 
-    if estado_generacion_q:
-        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
-    else:
-        GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
+        st.markdown(GENERANDO_LA, unsafe_allow_html=True)
 
-    st.markdown(GENERANDO_Q, unsafe_allow_html=True)
+        col1_1, col2_1 = st.columns((1, 1))
 
-    col1_1, col2_1 = st.columns((1, 1))
+        with col1_1:
 
-    with col1_1:
+            str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_charrua} </p>'
+            st.markdown(str_cmg_calculado_charrua, unsafe_allow_html=True)
 
-        str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_quillota} </p>'
-        st.markdown(str_cmg_calculado_quillota, unsafe_allow_html=True)
+        with col2_1:
+            str_co_la= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_la} </p>'
+            st.markdown(str_co_la, unsafe_allow_html=True)
 
-    with col2_1:
-        str_co_quillota= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_q} </p>'
-        st.markdown(str_co_quillota, unsafe_allow_html=True)
 
+        m1, m2  = st.columns(2)
+        m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
+        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
+        st.metric("Central referencia", central_referencia_charrua)
+
+
+    ################## DATOS Quillota ##############################################
+
+    with col2:
+        COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
+        st.markdown(COL2_TITLE, unsafe_allow_html=True)
+
+        if estado_generacion_q:
+            GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:Green; font-size:1.5rem;"> GENERANDO </p>'
+        else:
+            GENERANDO_Q = '<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> APAGADO </p>'
+
+        st.markdown(GENERANDO_Q, unsafe_allow_html=True)
+
+        col1_1, col2_1 = st.columns((1, 1))
+
+        with col1_1:
+
+            str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_quillota} </p>'
+            st.markdown(str_cmg_calculado_quillota, unsafe_allow_html=True)
+
+        with col2_1:
+            str_co_quillota= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_q} </p>'
+            st.markdown(str_co_quillota, unsafe_allow_html=True)
+
+       
+        m1, m2  = st.columns(2)
+        m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
+        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
+        st.metric("Central referencia", central_referencia_quillota)
+
+
+    ################## GRAFICO ##################
+
+    with st.container():
+
+            st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
+                    unsafe_allow_html=True)
+
+            col_left, col_center, col_right = st.columns([1,4,1])
+
+            with col_center:
+
+                # Create the Seaborn lineplot
+                plt.figure(figsize=(10, 6))
+                sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
+                
+                # add two horizontal lines
+                plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
+                plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+
+                # Manually add the legend
+                plt.legend()
+
+                # Set plot title and labels
+                plt.xlabel("Timestamp")
+                plt.ylabel("CMG")
+
+                # Show the plot
+                st.pyplot(plt.gcf())
+        
+
+            col1, col2 = st.columns((1, 1))
+
+            with col1:
+                st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
+                st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
+
+            with col2:
+                st.write('Ultimos movimientos Encendido/Apagado')
+                st.dataframe(df_central, use_container_width=True)
+
+
+
+
+with tab2:
+   st.header("Modificacion de Parametros")
+
+    col_a, col_b = st.columns((1, 2))
+
+    with col_a:
+
+        TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Modificacion attributos centrales </a></p>'
+        st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
+
+        st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
+
+        formula_co = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.0 rem;"> ((porcentaje_brent * Central.brent_price) + tasa_proveedor) * factor_motor + tasa_central + margen_garantia </a></p>'
+        st.markdown(formula_co, unsafe_allow_html=True)
+
+        central_seleccion = st.radio("Seleccionar central a modificar: ",('Los Angeles', 'Quillota'))
+
+        porcentaje_brent = st.text_input('Porcentaje Brent:', 'ej: 0.141')
+        tasa_proveedor = st.text_input('Tasa de proveedor:', 'ej: 5.84')
+        factor_motor = st.text_input('Factor motor:', 'ej: 10.41')
+        tasa_central = st.text_input('Tasa Central:', 'ej: 7.2')
+        margen_garantia = st.text_input('Margen Garantia:', 'ej: - 25.2')
+
+
+        if st.button('Submit'):
+            if text_input:
+                st.write("You entered: ", porcentaje_brent)
+  
    
-    m1, m2  = st.columns(2)
-    m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-    m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
-    st.metric("Central referencia", central_referencia_quillota)
-
-
-################## GRAFICO ##################
-
-with st.container():
-
-        st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
-                unsafe_allow_html=True)
-
-        col_left, col_center, col_right = st.columns([1,4,1])
-
-        with col_center:
-
-            # Create the Seaborn lineplot
-            plt.figure(figsize=(10, 6))
-            sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
-            
-            # add two horizontal lines
-            plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
-            plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
-
-            # Manually add the legend
-            plt.legend()
-
-            # Set plot title and labels
-            plt.xlabel("Timestamp")
-            plt.ylabel("CMG")
-
-            # Show the plot
-            st.pyplot(plt.gcf())
-    
-
-        col1, col2 = st.columns((1, 1))
-
-        with col1:
-            st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
-            st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
-
-        with col2:
-            st.write('Ultimos movimientos Encendido/Apagado')
-            st.dataframe(df_central, use_container_width=True)
-
-
-
 
 
 
