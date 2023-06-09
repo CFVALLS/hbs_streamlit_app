@@ -146,6 +146,35 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
         return {"error": f"Request failed: {e}"}
 
 
+def insert_central(name_central, data, host=API_HOST, port=API_PORT):
+    """
+    ejemplo:
+        data = {
+            "porcentaje_brent": 0.1411,
+            "tasa_proveedor": 5.8,
+            "factor_motor": 10.41,
+            "tasa_central": 7.2,
+            "margen_garantia": 0
+        }
+
+        response = insert_central("Los Angeles", data)
+
+    """
+    url = f"http://{API_HOST}:{API_PORT}/central/insert/{name_central}"
+    
+    try:
+        response = requests.put(url, json=data)
+        
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 404:
+            return {"error": "No central entries found"}
+        else:
+            return {"error": "Failed to insert central entry"}
+            
+    except requests.RequestException as e:
+        return {"error": f"Request failed: {e}"}
+
 
 
 #############################################################
@@ -352,24 +381,30 @@ with tab2:
 
         options = st.multiselect('What are your favorite colors',['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'],['Margen Garantia'])
 
+        dict_data = {}
         if 'Porcentaje Brent' in options:
                 porcentaje_brent = st.number_input('Porcentaje Brent [ej: 0.14]:', value = 0.0)
+                dict_data['porcentaje_brent'] = porcentaje_brent
         if 'Tasa Proveedor' in options:
                 tasa_proveedor = st.number_input('Tasa de proveedor [ej: 4.12]:', value = 0.0)
+                dict_data['tasa_proveedor'] = tasa_proveedor
         if 'Factor Motor' in options:
                 factor_motor = st.number_input('Factor motor [ej: 10.12]:', value = 0.0)
+                dict_data['factor_motor'] = factor_motor
         if 'Tasa Central' in options:
                 tasa_central = st.number_input('Tasa Central [ej: 8.8]:', value = 0.0)
+                dict_data['tasa_central'] = tasa_central
         if 'Margen Garantia' in options:
                 margen_garantia = st.number_input('Margen Garantia [ej: -25.0]:', value = 0.0)
+                dict_data['margen_garantia'] = margen_garantia
 
 
-        if st.button('Submit'):
-            if porcentaje_brent:
-                st.write("You entered: ", porcentaje_brent)
-            if tasa_proveedor:
-                st.write("You entered: ", tasa_proveedor)
   
+        if st.button('Submit'):
+            data = dict_data
+            print(data)
+
+            # insert_central(name_central= central_seleccion, data, host=API_HOST, port=API_PORT)
 
 
 
