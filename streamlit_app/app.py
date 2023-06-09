@@ -402,7 +402,7 @@ with tab2:
   
         if st.button('Submit'):
             data = dict_data
-            print(data)
+            st.write(data)
 
             # insert_central(name_central= central_seleccion, data, host=API_HOST, port=API_PORT)
 
