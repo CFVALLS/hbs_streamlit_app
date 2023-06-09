@@ -205,9 +205,8 @@ if not cmg_online:
 
 
 with tab1:
-   st.header("Monitoreo")
+    st.header("Monitoreo")
     ################# Header #################
-
     col_a, col_b = st.columns((1, 2))
 
     with col_a:
@@ -301,51 +300,50 @@ with tab1:
 
     with st.container():
 
-            st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
-                    unsafe_allow_html=True)
+        st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
+                unsafe_allow_html=True)
 
-            col_left, col_center, col_right = st.columns([1,4,1])
+        col_left, col_center, col_right = st.columns([1,4,1])
 
-            with col_center:
+        with col_center:
 
-                # Create the Seaborn lineplot
-                plt.figure(figsize=(10, 6))
-                sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
-                
-                # add two horizontal lines
-                plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
-                plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+            # Create the Seaborn lineplot
+            plt.figure(figsize=(10, 6))
+            sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
+            
+            # add two horizontal lines
+            plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
+            plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
 
-                # Manually add the legend
-                plt.legend()
+            # Manually add the legend
+            plt.legend()
 
-                # Set plot title and labels
-                plt.xlabel("Timestamp")
-                plt.ylabel("CMG")
+            # Set plot title and labels
+            plt.xlabel("Timestamp")
+            plt.ylabel("CMG")
 
-                # Show the plot
-                st.pyplot(plt.gcf())
-        
+            # Show the plot
+            st.pyplot(plt.gcf())
+    
 
-            col1, col2 = st.columns((1, 1))
+        col1, col2 = st.columns((1, 1))
 
-            with col1:
-                st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
-                st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
+        with col1:
+            st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
+            st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
 
-            with col2:
-                st.write('Ultimos movimientos Encendido/Apagado')
-                st.dataframe(df_central, use_container_width=True)
+        with col2:
+            st.write('Ultimos movimientos Encendido/Apagado')
+            st.dataframe(df_central, use_container_width=True)
 
 
 
 
 with tab2:
    st.header("Modificacion de Parametros")
+   col_a, col_b = st.columns((1, 2))
 
-    col_a, col_b = st.columns((1, 2))
-
-    with col_a:
+   with col_a:
 
         TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Modificacion attributos centrales </a></p>'
         st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
