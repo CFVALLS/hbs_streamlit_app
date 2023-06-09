@@ -346,8 +346,7 @@ with tab2:
    with col_a:
         st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
 
-        formula_co = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.0 rem;"> ((porcentaje_brent * Central.brent_price) + tasa_proveedor) * factor_motor + tasa_central + margen_garantia </a></p>'
-        st.markdown(formula_co, unsafe_allow_html=True)
+        st.latex(body = r''' Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia ''' )
 
         central_seleccion = st.radio("Seleccionar central a modificar: ",('Los Angeles', 'Quillota'))
 
