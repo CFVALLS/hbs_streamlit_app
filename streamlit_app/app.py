@@ -400,7 +400,7 @@ with tab2:
 
   
         if st.button('Submit'):
-            st.write(data)
+            st.write(dict_data)
             insert_central(central_seleccion, dict_data, host=API_HOST, port=API_PORT)
             st.write(f'Atributos de central {central_seleccion} modificados')
 
