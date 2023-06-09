@@ -344,10 +344,6 @@ with tab2:
    col_a, col_b = st.columns((1, 2))
 
    with col_a:
-
-        TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Modificacion attributos centrales </a></p>'
-        st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
-
         st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
 
         formula_co = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.0 rem;"> ((porcentaje_brent * Central.brent_price) + tasa_proveedor) * factor_motor + tasa_central + margen_garantia </a></p>'
@@ -355,11 +351,18 @@ with tab2:
 
         central_seleccion = st.radio("Seleccionar central a modificar: ",('Los Angeles', 'Quillota'))
 
-        porcentaje_brent = st.number_input('Porcentaje Brent:', value = 0.0)
-        tasa_proveedor = st.number_input('Tasa de proveedor:', value = 0.0)
-        factor_motor = st.number_input('Factor motor:', value = 0.0)
-        tasa_central = st.number_input('Tasa Central:', value = 0.0)
-        margen_garantia = st.number_input('Margen Garantia:', value = 0.0)
+        options = st.multiselect('What are your favorite colors',['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'],['Margen Garantia'])
+
+        if 'Porcentaje Brent' in options:
+                porcentaje_brent = st.number_input('Porcentaje Brent [ej: 0.14]:', value = 0.0)
+        if 'Tasa Proveedor' in options:
+                tasa_proveedor = st.number_input('Tasa de proveedor [ej: 4.12]:', value = 0.0)
+        if 'Factor Motor' in options:
+                factor_motor = st.number_input('Factor motor [ej: 10.12]:', value = 0.0)
+        if 'Tasa Central' in options:
+                tasa_central = st.number_input('Tasa Central [ej: 8.8]:', value = 0.0)
+        if 'Margen Garantia' in options:
+                margen_garantia = st.number_input('Margen Garantia [ej: -25.0]:', value = 0.0)
 
 
         if st.button('Submit'):
@@ -368,7 +371,7 @@ with tab2:
             if tasa_proveedor:
                 st.write("You entered: ", tasa_proveedor)
   
-   
+
 
 
 
