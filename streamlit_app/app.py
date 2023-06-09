@@ -365,6 +365,8 @@ with tab2:
         if st.button('Submit'):
             if porcentaje_brent:
                 st.write("You entered: ", porcentaje_brent)
+            if tasa_proveedor:
+                st.write("You entered: ", tasa_proveedor)
   
    
 
