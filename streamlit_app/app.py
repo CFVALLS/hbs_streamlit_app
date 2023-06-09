@@ -403,6 +403,7 @@ with tab2:
             st.write(dict_data)
             insert_central(central_seleccion, dict_data, host=API_HOST, port=API_PORT)
             st.write(f'Atributos de central {central_seleccion} modificados')
+            st.session_state.disabled
 
 
 ################## footer ##################
