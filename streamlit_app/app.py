@@ -355,15 +355,15 @@ with tab2:
 
         central_seleccion = st.radio("Seleccionar central a modificar: ",('Los Angeles', 'Quillota'))
 
-        porcentaje_brent = st.text_input('Porcentaje Brent:', 'ej: 0.141')
-        tasa_proveedor = st.text_input('Tasa de proveedor:', 'ej: 5.84')
-        factor_motor = st.text_input('Factor motor:', 'ej: 10.41')
-        tasa_central = st.text_input('Tasa Central:', 'ej: 7.2')
-        margen_garantia = st.text_input('Margen Garantia:', 'ej: - 25.2')
+        porcentaje_brent = st.number_input('Porcentaje Brent:', value = 0.0)
+        tasa_proveedor = st.number_input('Tasa de proveedor:', value = 0.0)
+        factor_motor = st.number_input('Factor motor:', value = 0.0)
+        tasa_central = st.number_input('Tasa Central:', value = 0.0)
+        margen_garantia = st.number_input('Margen Garantia:', value = 0.0)
 
 
         if st.button('Submit'):
-            if text_input:
+            if porcentaje_brent:
                 st.write("You entered: ", porcentaje_brent)
   
    
