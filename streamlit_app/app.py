@@ -219,7 +219,6 @@ with cn.establecer_session(engine) as session:
     df_central_mod = cn.query_central_table_modifications(session, num_entries= 10)
 
 
-
 ############# Queries externas #############
 
 cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, barras=['Quillota' , 'Charrua'], hora_in=hora_redondeada, user_key=USER_KEY)
@@ -374,9 +373,10 @@ with tab2:
    col_a, col_b = st.columns((1, 2))
 
    with col_a:
-        st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
+        funcion_co= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.0 rem;"> $$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$ </p>'
+        st.markdown(funcion_co, unsafe_allow_html=True)
 
-        st.latex(body = r''' Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia ''' )
+        # st.latex(body = r''' Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia ''' )
 
         editor = st.text_input('Ingresar Nombre de persona realizando cambio de atributos', 'Cristian Valls')
 
