@@ -408,8 +408,7 @@ with tab2:
             st.write(f'Atributos de central {central_seleccion} modificados')
             st.session_state.disabled = True
 
-
-    with col_b:
+   with col_b:
         st.write('Ultimos cambios de atributos')
         st.dataframe(df_central_mod, use_container_width=True)
 
