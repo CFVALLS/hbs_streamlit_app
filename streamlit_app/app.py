@@ -146,7 +146,7 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
         return {"error": f"Request failed: {e}"}
 
 
-def insert_central(name_central, data, host=API_HOST, port=API_PORT):
+def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
     """
     ejemplo:
         data = {
@@ -160,7 +160,7 @@ def insert_central(name_central, data, host=API_HOST, port=API_PORT):
         response = insert_central("Los Angeles", data)
 
     """
-    url = f"http://{API_HOST}:{API_PORT}/central/insert/{name_central}"
+    url = f"http://{API_HOST}:{API_PORT}/central/insert/{name_central}/{editor}"
     
     try:
         response = requests.put(url, json=data)
@@ -377,9 +377,11 @@ with tab2:
 
         st.latex(body = r''' Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia ''' )
 
+        editor = st.text_input('Ingresar Nombre de persona realizando cambio de atributos', 'Cristian Valls')
+
         central_seleccion = st.radio("Seleccionar central a modificar: ",('Los Angeles', 'Quillota'))
 
-        options = st.multiselect('What are your favorite colors',['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'],['Margen Garantia'])
+        options = st.multiselect('Seleccionar atributos a modificar',['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'],['Margen Garantia'])
 
         dict_data = {}
         if 'Porcentaje Brent' in options:
@@ -401,7 +403,7 @@ with tab2:
   
         if st.button('Submit'):
             st.write(dict_data)
-            insert_central(central_seleccion, dict_data, host=API_HOST, port=API_PORT)
+            insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
             st.write(f'Atributos de central {central_seleccion} modificados')
             st.session_state.disabled = True
 
