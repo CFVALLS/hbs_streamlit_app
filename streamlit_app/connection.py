@@ -111,12 +111,12 @@ class CmgPonderado(Base):
 
 class CentralTable(Base):
     """
-    Representa la tabla 'central' en la base de datos.   
+    Representa la tabla 'central' en la base de datos.
     """
     __tablename__ = 'central'
 
     id = Column(Integer, primary_key=True)
-    nombre = Column(String(255))  # tinytext can be represented as a String
+    nombre = Column(String(255))
     generando = Column(Boolean)
     tasa_proveedor = Column(DECIMAL(7, 4))
     porcentaje_brent = Column(DECIMAL(7, 4))
@@ -125,6 +125,10 @@ class CentralTable(Base):
     fecha_referencia_brent = Column(Text)
     costo_operacional = Column(DECIMAL(7, 3))
     fecha_registro = Column(Text)
+    margen_garantia = Column(DECIMAL(7, 3), nullable=False)
+    factor_motor = Column(DECIMAL(7, 3), nullable=False)
+    external_update = Column(Boolean, default=False)
+    editor = Column(String(60), nullable=True, default=None)
 
     __table_args__ = {}
 
@@ -579,6 +583,31 @@ def query_central_table(session_in, num_entries=6):
     """
     try:
         query = session_in.query(CentralTable).order_by(desc(CentralTable.id)).limit(num_entries)
+        entries = query.all()
+        if entries:
+            data = [entry.as_list() for entry in entries]
+            df = pd.DataFrame(data, columns=CentralTable.__table__.columns.keys())
+            return df
+        else:
+            return pd.DataFrame()
+
+    except Exception as e:
+        logging.error(f"Error while retrieving entries from 'central' table: {e}")
+        return None
+
+def query_central_table_modifications(session_in, num_entries=10):
+    """
+    Retrieves the specified number of entries from the 'central' table where external_update is True.
+
+    Args:
+        session_in (sqlalchemy.orm.session.Session): SQLAlchemy Session object.
+        num_entries (int): Number of entries to retrieve.
+
+    Returns:
+        pd.DataFrame: DataFrame containing the retrieved entries.
+    """
+    try:
+        query = session_in.query(CentralTable).filter(CentralTable.external_update == True).order_by(desc(CentralTable.id)).limit(num_entries)
         entries = query.all()
         if entries:
             data = [entry.as_list() for entry in entries]
