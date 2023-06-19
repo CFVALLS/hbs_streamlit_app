@@ -216,7 +216,7 @@ with cn.establecer_session(engine) as session:
     # Consultar ultimas entradas de table Central: 
 
     df_central = cn.query_central_table(session, num_entries= 10)
-    df_central_mod = cn.cn.query_central_table_modifications(session, num_entries= 10)
+    df_central_mod = cn.query_central_table_modifications(session, num_entries= 10)
 
 
 
