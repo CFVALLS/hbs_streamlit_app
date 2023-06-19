@@ -373,8 +373,8 @@ with tab2:
    col_a, col_b = st.columns((1, 2))
 
    with col_a:
-        funcion_co= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.0 rem;"> $$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$ </p>'
-        st.markdown(funcion_co, unsafe_allow_html=True)
+
+        st.markdown("($$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$)", unsafe_allow_html=True)
 
         # st.latex(body = r''' Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia ''' )
 
