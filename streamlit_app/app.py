@@ -215,7 +215,8 @@ with cn.establecer_session(engine) as session:
 
     # Consultar ultimas entradas de table Central: 
 
-    df_central = cn.query_central_table(session, num_entries= 10 )
+    df_central = cn.query_central_table(session, num_entries= 10)
+    df_central_mod = cn.cn.query_central_table_modifications(session, num_entries= 10)
 
 
 
@@ -406,6 +407,11 @@ with tab2:
             insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
             st.write(f'Atributos de central {central_seleccion} modificados')
             st.session_state.disabled = True
+
+
+    with col_b:
+        st.write('Ultimos cambios de atributos')
+        st.dataframe(df_central_mod, use_container_width=True)
 
 
 ################## footer ##################
