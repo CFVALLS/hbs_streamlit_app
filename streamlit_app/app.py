@@ -152,6 +152,7 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
 
 
 def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
+    
     url = f"http://{host}:{port}/central/insert/{quote(name_central)}/{quote(editor)}"
     headers = {"Content-Type": "application/json"}
     
@@ -166,7 +167,7 @@ def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
             return {"error": "Failed to insert central entry"}
             
     except requests.RequestException as e:
-        print(f"Request failed: {e}")
+        st.write(f"Request failed: {e}")
         return {"error": f"Request failed: {e}"}
 
 
@@ -394,14 +395,9 @@ with tab2:
                 margen_garantia = st.number_input('Margen Garantia [ej: -25.0]:', value = 0.0)
                 dict_data['margen_garantia'] = margen_garantia
 
-  
         if st.button('Submit'):
-            st.write(central_seleccion, editor, dict_data)
-            st.write(API_HOST, API_PORT)
-            st.write(f"http://{API_HOST}:{API_PORT}/central/insert/{central_seleccion}/{editor}")
-
             try:
-                insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
+                insert_central(central_seleccion, editor , dict_data, host=API_HOST, port=API_PORT)
 
             except Exception as error:
                 print(f'insert error: {error}')
