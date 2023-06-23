@@ -164,7 +164,7 @@ def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
         elif response.status_code == 404:
             return {"error": "No central entries found"}
         else:
-            return {"error": "Failed to insert central entry"}
+            return (f"Failed to insert central entry. Response content: {response.content}")
             
     except requests.RequestException as e:
         st.write(f"Request failed: {e}")
