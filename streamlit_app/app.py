@@ -152,7 +152,7 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
 
 
 def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
-    
+
     url = f"http://{host}:{port}/central/insert/{quote(name_central)}/{quote(editor)}"
     headers = {"Content-Type": "application/json"}
     
@@ -365,45 +365,42 @@ with tab2:
    st.header("Modificacion de Parametros")
    col_a, col_b = st.columns((1, 2))
 
-   with col_a:
+    with col_a:
 
         st.markdown("($$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$)", unsafe_allow_html=True)
 
-        # st.latex(body = r''' Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia ''' )
-
         editor = st.text_input('Ingresar Nombre de persona realizando cambio de atributos', 'Cristian Valls')
-
-        central_seleccion = st.radio("Seleccionar central a modificar: ",('Los Angeles', 'Quillota'))
-
-        options = st.multiselect('Seleccionar atributos a modificar',['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'],['Margen Garantia'])
+        central_seleccion = st.radio("Seleccionar central a modificar:", ('Los Angeles', 'Quillota'))
+        options = st.multiselect('Seleccionar atributos a modificar', ['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'], ['Margen Garantia'])
 
         dict_data = {}
 
         if 'Porcentaje Brent' in options:
-                porcentaje_brent = st.number_input('Porcentaje Brent [ej: 0.14]:', value = 0.0)
-                dict_data['porcentaje_brent'] = porcentaje_brent
+            porcentaje_brent = st.number_input('Porcentaje Brent [ej: 0.14]:', value=0.0)
+            dict_data['porcentaje_brent'] = porcentaje_brent
         if 'Tasa Proveedor' in options:
-                tasa_proveedor = st.number_input('Tasa de proveedor [ej: 4.12]:', value = 0.0)
-                dict_data['tasa_proveedor'] = tasa_proveedor
+            tasa_proveedor = st.number_input('Tasa de proveedor [ej: 4.12]:', value=0.0)
+            dict_data['tasa_proveedor'] = tasa_proveedor
         if 'Factor Motor' in options:
-                factor_motor = st.number_input('Factor motor [ej: 10.12]:', value = 0.0)
-                dict_data['factor_motor'] = factor_motor
+            factor_motor = st.number_input('Factor motor [ej: 10.12]:', value=0.0)
+            dict_data['factor_motor'] = factor_motor
         if 'Tasa Central' in options:
-                tasa_central = st.number_input('Tasa Central [ej: 8.8]:', value = 0.0)
-                dict_data['tasa_central'] = tasa_central
+            tasa_central = st.number_input('Tasa Central [ej: 8.8]:', value=0.0)
+            dict_data['tasa_central'] = tasa_central
         if 'Margen Garantia' in options:
-                margen_garantia = st.number_input('Margen Garantia [ej: -25.0]:', value = 0.0)
-                dict_data['margen_garantia'] = margen_garantia
+            margen_garantia = st.number_input('Margen Garantia [ej: -25.0]:', value=0.0)
+            dict_data['margen_garantia'] = margen_garantia
 
         if st.button('Submit'):
+
             try:
-                insert_central(central_seleccion, editor , dict_data, host=API_HOST, port=API_PORT)
-
+                print(f"Calling insert_central with data: {dict_data}")
+                insert_central(central_seleccion, editor, dict_data, host=API_HOST, port=API_PORT)
+                st.write(f'Atributos de central {central_seleccion} modificados')
+                st.session_state.disabled = True
             except Exception as error:
-                print(f'insert error: {error}')
-
-            st.write(f'Atributos de central {central_seleccion} modificados')
-            st.session_state.disabled = True
+                print(f'Insert error: {error}')
+                st.error(f'Error occurred during insert: {error}')
 
    with col_b:
         st.write('Ultimos cambios de atributos')
