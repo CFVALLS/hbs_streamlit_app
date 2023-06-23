@@ -401,7 +401,8 @@ with tab2:
 
   
         if st.button('Submit'):
-            st.write(dict_data)
+            st.write(central_seleccion, editor, dict_data)
+            
             try:
                 insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
             except Exception as error:
