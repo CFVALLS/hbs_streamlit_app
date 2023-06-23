@@ -366,8 +366,6 @@ with tab1:
             st.dataframe(df_central, use_container_width=True)
 
 
-
-
 with tab2:
    st.header("Modificacion de Parametros")
    col_a, col_b = st.columns((1, 2))
@@ -404,7 +402,11 @@ with tab2:
   
         if st.button('Submit'):
             st.write(dict_data)
-            insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
+            try:
+                insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
+            except Exception as error:
+                print(f'insert error: {error}')
+
             st.write(f'Atributos de central {central_seleccion} modificados')
             st.session_state.disabled = True
 
