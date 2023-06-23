@@ -364,10 +364,10 @@ with tab1:
 with tab2:
    st.header("Modificacion de Parametros")
    col_a, col_b = st.columns((1, 2))
+   
+   with col_a:
 
-    with col_a:
-
-        st.markdown("($$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$)", unsafe_allow_html=True)
+    st.markdown("($$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$)", unsafe_allow_html=True)
 
         editor = st.text_input('Ingresar Nombre de persona realizando cambio de atributos', 'Cristian Valls')
         central_seleccion = st.radio("Seleccionar central a modificar:", ('Los Angeles', 'Quillota'))
@@ -401,8 +401,8 @@ with tab2:
             except Exception as error:
                 print(f'Insert error: {error}')
                 st.error(f'Error occurred during insert: {error}')
-
-   with col_b:
+    
+    with col_b:
         st.write('Ultimos cambios de atributos')
         st.dataframe(df_central_mod, use_container_width=True)
 
