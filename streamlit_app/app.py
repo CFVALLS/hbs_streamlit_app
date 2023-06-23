@@ -152,7 +152,6 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
 
 def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
     url = f"http://{host}:{port}/central/insert/{name_central}/{editor}"
-    print(url)
     
     try:
         response = requests.put(url, json=data, timeout=15)
@@ -396,6 +395,8 @@ with tab2:
   
         if st.button('Submit'):
             st.write(central_seleccion, editor, dict_data)
+            st.write(API_HOST, API_PORT)
+            st.write(f"http://{API_HOST}:{API_PORT}/central/insert/{central_seleccion}/{editor}")
 
             try:
                 insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
@@ -420,3 +421,4 @@ with st.container():
     HEADER_TITLE = '<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Blue; font-size:1rem;"> <a href="https://github.com/CFVALLS">Author: Cristian Valls </a></p>'
     st.markdown(HEADER_TITLE, unsafe_allow_html=True)
 
+    
