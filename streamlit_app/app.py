@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+from urllib.parse import quote
 import numpy as np
 import pandas as pd
 import json
@@ -151,10 +152,11 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
 
 
 def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
-    url = f"http://{host}:{port}/central/insert/{name_central}/{editor}"
+    url = f"http://{host}:{port}/central/insert/{quote(name_central)}/{quote(editor)}"
+    headers = {"Content-Type": "application/json"}
     
     try:
-        response = requests.put(url, json=data, timeout=15)
+        response = requests.put(url, headers=headers, json=data, timeout=15)
         
         if response.status_code == 200:
             return response.json()
