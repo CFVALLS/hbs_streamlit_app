@@ -130,10 +130,14 @@ def get_costo_marginal_online_hora(fecha_gte, fecha_lte, barras, hora_in, user_k
     return out_dict
 
 def get_central(name_central, host=API_HOST, port=API_PORT):
-    url = f"http://{API_HOST}:{API_PORT}/central/{name_central}"
+    '''
+    Usa request API para obtener la ultima entrada de la central inputada
     
+    '''
+    url = f"http://{host}:{port}/central/{name_central}"
+   
     try:
-        response = requests.get(url)
+        response = requests.get(url , timeout= 10)
         
         if response.status_code == 200:
             return response.json()
@@ -148,6 +152,7 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
 
 def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
     url = f"http://{host}:{port}/central/insert/{name_central}/{editor}"
+    print(url)
     
     try:
         response = requests.put(url, json=data, timeout=15)
@@ -371,6 +376,7 @@ with tab2:
         options = st.multiselect('Seleccionar atributos a modificar',['Porcentaje Brent', 'Tasa Proveedor', 'Factor Motor', 'Tasa Central', 'Margen Garantia'],['Margen Garantia'])
 
         dict_data = {}
+
         if 'Porcentaje Brent' in options:
                 porcentaje_brent = st.number_input('Porcentaje Brent [ej: 0.14]:', value = 0.0)
                 dict_data['porcentaje_brent'] = porcentaje_brent
@@ -393,6 +399,7 @@ with tab2:
 
             try:
                 insert_central(central_seleccion, editor ,dict_data, host=API_HOST, port=API_PORT)
+
             except Exception as error:
                 print(f'insert error: {error}')
 
