@@ -394,6 +394,7 @@ with tab2:
 
             try:
                 st.write(f"Calling insert_central with data: {dict_data}")
+                st.write(f"http://{API_HOST}:{API_PORT}/central/insert/{quote(central_seleccion)}/{quote(editor)}")
                 insert_central(central_seleccion, editor, dict_data, host=API_HOST, port=API_PORT)
                 st.write(f'Atributos de central {central_seleccion} modificados')
 
