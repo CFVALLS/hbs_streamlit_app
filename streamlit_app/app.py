@@ -393,13 +393,12 @@ with tab2:
         if st.button('Submit'):
 
             try:
-                print(f"Calling insert_central with data: {dict_data}")
+                st.write(f"Calling insert_central with data: {dict_data}")
                 insert_central(central_seleccion, editor, dict_data, host=API_HOST, port=API_PORT)
                 st.write(f'Atributos de central {central_seleccion} modificados')
-                st.session_state.disabled = True
 
             except Exception as error:
-                print(f'Insert error: {error}')
+                st.write(f'Insert error: {error}')
                 st.error(f'Error occurred during insert: {error}')
     
     with col_b:
