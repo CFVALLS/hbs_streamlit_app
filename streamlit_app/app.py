@@ -362,12 +362,11 @@ with tab1:
 
 
 with tab2:
-   st.header("Modificacion de Parametros")
-   col_a, col_b = st.columns((1, 2))
+    st.header("Modificacion de Parametros")
+    col_a, col_b = st.columns((1, 2))
    
-   with col_a:
-
-    st.markdown("($$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$)", unsafe_allow_html=True)
+    with col_a:
+        st.markdown("($$Costo Operacional = ((Porcentaje Brent * Precio Brent) + Tasa Proveedor) * Factor Motor + Tasa Central + Margen de Garantia$$)", unsafe_allow_html=True)
 
         editor = st.text_input('Ingresar Nombre de persona realizando cambio de atributos', 'Cristian Valls')
         central_seleccion = st.radio("Seleccionar central a modificar:", ('Los Angeles', 'Quillota'))
@@ -398,6 +397,7 @@ with tab2:
                 insert_central(central_seleccion, editor, dict_data, host=API_HOST, port=API_PORT)
                 st.write(f'Atributos de central {central_seleccion} modificados')
                 st.session_state.disabled = True
+
             except Exception as error:
                 print(f'Insert error: {error}')
                 st.error(f'Error occurred during insert: {error}')
