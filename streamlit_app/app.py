@@ -212,6 +212,7 @@ with cn.establecer_session(engine) as session:
 
     df_central = cn.query_central_table(session, num_entries= 10)
     df_central_mod = cn.query_central_table_modifications(session, num_entries= 10)
+    df_central_mod['margen_garantia'] = df_central_mod['margen_garantia'].astype(float)
 
 
 ############# Queries externas #############
@@ -393,8 +394,6 @@ with tab2:
         if st.button('Submit'):
 
             try:
-                st.write(f"Calling insert_central with data: {dict_data}")
-                st.write(f"http://{API_HOST}:{API_PORT}/central/insert/{quote(central_seleccion)}/{quote(editor)}")
                 st.write((insert_central(central_seleccion, editor, dict_data, host=API_HOST, port=API_PORT)))
                 st.write(f'Atributos de central {central_seleccion} modificados')
 
@@ -404,7 +403,7 @@ with tab2:
     
     with col_b:
         st.write('Ultimos cambios de atributos')
-        st.dataframe(df_central_mod, use_container_width=True)
+        st.dataframe(df_central_mod)
 
 
 ################## footer ##################
