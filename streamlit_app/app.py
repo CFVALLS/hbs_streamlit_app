@@ -183,10 +183,21 @@ with cn.establecer_session(engine) as session:
     ultimo_mod_rio = tracking_cmg_last_row[3]
 
     # get last entry cmg_tiempo_real , afecto_desacople, central_referencia
-    central_referencia_charrua, afecto_desacople_charrua, cmg_charrua = cn.query_values_last_desacople_bool(
+    central_referencia_charrua, desacople_charrua, cmg_charrua = cn.query_values_last_desacople_bool(
         session, barra_transmision='CHARRUA__220')
-    central_referencia_quillota, afecto_desacople_quillota, cmg_quillota = cn.query_values_last_desacople_bool(
+
+    if desacople_charrua:
+        afecto_desacople_charrua = 'Activo'
+    else:
+        afecto_desacople_charrua = 'No Activo'
+
+    central_referencia_quillota, desacople_quillota, cmg_quillota = cn.query_values_last_desacople_bool(
         session, barra_transmision='QUILLOTA__220')
+
+    if desacople_quillota:
+        afecto_desacople_quillota = 'Activo'
+    else:
+        afecto_desacople_quillota = 'No Activo'
 
     cmg_charrua = round(float(cmg_charrua) , 1)
     cmg_quillota = round(float(cmg_quillota) , 1)
@@ -204,8 +215,8 @@ with cn.establecer_session(engine) as session:
     estado_generacion_la =  last_row_la[2]
     estado_generacion_q = last_row_q[2]
 
-    costo_operacional_la = round(float(last_row_la[8]),1)
-    costo_operacional_q = round(float(last_row_q[8]),1)
+    costo_operacional_la = round(float(last_row_la[8]),2)
+    costo_operacional_q = round(float(last_row_q[8]),2)
 
 
     # Consultar ultimas entradas de table Central: 
@@ -237,7 +248,7 @@ with tab1:
 
     with col_a:
 
-        TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Actualizacion: {ultimo_tracking}</a></p>'
+        TRACKING_TITLE = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Última Actualización: {ultimo_tracking}</a></p>'
         st.markdown(TRACKING_TITLE, unsafe_allow_html=True)
 
         if CONN_STATUS:
@@ -245,7 +256,7 @@ with tab1:
         else:
             CONNECTION_MD = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Red; font-size:1rem;"> Connected to MySQL server: {CONN_STATUS} </a></p>'
         
-        TRACKING_RIO = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Ultima Modificacion RIO.xls: {ultimo_mod_rio}</a></p>'
+        TRACKING_RIO = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.3rem;"> Última Modificación CEN: {ultimo_mod_rio}</a></p>'
 
         st.markdown(TRACKING_RIO, unsafe_allow_html=True)
         
@@ -263,7 +274,8 @@ with tab1:
 
     ################## DATOS Charrua - Los Angeles ##############################################
     with col1:
-        COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Los Angeles </p>'
+        COL1_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem; text-align:center;"> Los Angeles </p>'
+
         st.markdown(COL1_TITLE, unsafe_allow_html=True)
 
         if estado_generacion_la:
@@ -277,7 +289,7 @@ with tab1:
 
         with col1_1:
 
-            str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_charrua} </p>'
+            str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMg Calculado - {cmg_charrua} </p>'
             st.markdown(str_cmg_calculado_charrua, unsafe_allow_html=True)
 
         with col2_1:
@@ -294,7 +306,7 @@ with tab1:
     ################## DATOS Quillota ##############################################
 
     with col2:
-        COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem;"> Zona - Quillota </p>'
+        COL2_TITLE = '<p style="font-family:sans-serif; font-weight: bold; color:#050a30; font-size:2rem; text-align:center;"> Quillota </p>'
         st.markdown(COL2_TITLE, unsafe_allow_html=True)
 
         if estado_generacion_q:
