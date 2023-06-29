@@ -37,6 +37,10 @@ API_PORT = st.secrets["API"]["PORT"]
 engine, metadata = cn.establecer_engine(
     DATABASE, USER, PASSWORD, HOST, PORT, verbose=True)
 
+# Establecer motor de base de datos
+engine, metadata = cn.establecer_engine(
+    DATABASE, USER, PASSWORD, HOST, PORT, verbose=True)
+
 CONN_STATUS = engine is not None
 
 st.set_page_config(layout="wide")
@@ -50,9 +54,8 @@ chile_tz = pytz.timezone('America/Santiago')
 chile_datetime = datetime.now(chile_tz)
 
 fecha = chile_datetime.strftime("%Y-%m-%d")
-print(fecha)
 hora = chile_datetime.strftime("%H:%M:%S")
-print(hora)
+
 
 # round hora to nearest hour
 hora = hora.split(':')
@@ -199,16 +202,15 @@ with cn.establecer_session(engine) as session:
     else:
         afecto_desacople_quillota = 'No Activo'
 
-    cmg_charrua = round(float(cmg_charrua) , 1)
-    cmg_quillota = round(float(cmg_quillota) , 1)
+    cmg_charrua = round(float(cmg_charrua) , 2)
+    cmg_quillota = round(float(cmg_quillota) , 2)
     
     # consulta de datos cmg_ponderado 48 horas previas
-    cmg_ponderado_48h = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, 72))
-    cmg_ponderado_48h['timestamp'] = pd.to_datetime(cmg_ponderado_48h["timestamp"], format="%d.%m.%y %H:%M:%S")
-    cmg_ponderado_48h.drop(['unix_time'], axis=1, inplace=True)
+    cmg_ponderado_96h = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, 96))
+    cmg_ponderado_96h['timestamp'] = pd.to_datetime(cmg_ponderado_96h["timestamp"], format="%d.%m.%y %H:%M:%S")
+    cmg_ponderado_96h.drop(['unix_time'], axis=1, inplace=True)
 
     # consulta estado central 
-    # [227, 'Los Angeles', False, Decimal('5.5000'), Decimal('0.1166'), Decimal('7.2000'), Decimal('84.640'), '2023-04', Decimal('146.649'), '11.05.23 13:50:42', Decimal('-25.000'), Decimal('10.700')]
     last_row_la = cn.query_last_row_central(session, 'Los Angeles') 
     last_row_q = cn.query_last_row_central(session, 'Quillota')
 
@@ -220,11 +222,41 @@ with cn.establecer_session(engine) as session:
 
 
     # Consultar ultimas entradas de table Central: 
-
     df_central = cn.query_central_table(session, num_entries= 10)
     df_central['margen_garantia'] = df_central['margen_garantia'].astype(float)
     df_central_mod = cn.query_central_table_modifications(session, num_entries= 10)
     df_central_mod['margen_garantia'] = df_central_mod['margen_garantia'].astype(float)
+
+
+    # Hacer merge entre df_central y cmg_ponderado
+    cmg_ponderado = cmg_ponderado_96h.copy()
+    cmg_ponderado['timestamp'] = cmg_ponderado['timestamp'].astype(str)
+    cmg_ponderado[['fecha', 'hora']] = cmg_ponderado['timestamp'].str.split(' ', expand=True)
+    cmg_ponderado['central'] = cmg_ponderado['barra_transmision'].replace({'CHARRUA__220':'Los Angeles' , 'QUILLOTA__220' : 'Quillota'})
+
+    df_central_to_merge = df_central.copy()
+    df_central_to_merge[['fecha', 'hora']] = df_central_to_merge['fecha_registro'].str.split(' ', expand=True)
+    df_central_to_merge['hora'] = pd.to_datetime(df_central_to_merge['hora']).dt.floor('H').dt.time
+
+    # Reformat the 'fecha' column in cmg_ponderado
+    cmg_ponderado['fecha'] = pd.to_datetime(cmg_ponderado['fecha'], format='%Y-%m-%d')
+
+    # Reformat the 'fecha' column in df_central_to_merge
+    df_central_to_merge['fecha'] = pd.to_datetime(df_central_to_merge['fecha'], format='%d.%m.%y')
+
+    # Rename the 'nombre' column in df_central_to_merge to 'central'
+    df_central_to_merge.rename(columns={'nombre': 'central'}, inplace=True)
+
+
+    # Perform the merge on 'hora', 'fecha', and 'central' columns
+    cmg_ponderado['hora'] = cmg_ponderado['hora'].astype(str)
+    cmg_ponderado['fecha'] = cmg_ponderado['fecha'].astype(str)
+    df_central_to_merge['hora'] = df_central_to_merge['hora'].astype(str)
+    df_central_to_merge['fecha'] = df_central_to_merge['fecha'].astype(str)
+
+    merged_df = pd.merge(cmg_ponderado, df_central_to_merge, on=['hora', 'fecha', 'central'], how='inner')
+    merged_df.drop(['timestamp', 'fecha_registro', 'external_update', 'editor', 'barra_transmision','id'], axis=1, inplace=True)
+    merged_df = merged_df[['central','costo_operacional','generando','cmg_ponderado','fecha', 'hora','margen_garantia','factor_motor','tasa_proveedor', 'porcentaje_brent', 'tasa_central', 'precio_brent','fecha_referencia_brent' ]]
 
 
 ############# Queries externas #############
@@ -320,7 +352,7 @@ with tab1:
 
         with col1_1:
 
-            str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMG Calculado - {cmg_quillota} </p>'
+            str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMg Calculado - {cmg_quillota} </p>'
             st.markdown(str_cmg_calculado_quillota, unsafe_allow_html=True)
 
         with col2_1:
@@ -347,7 +379,7 @@ with tab1:
 
             # Create the Seaborn lineplot
             plt.figure(figsize=(10, 6))
-            sns.lineplot(data=cmg_ponderado_48h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
+            sns.lineplot(data=cmg_ponderado_96h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
             
             # add two horizontal lines
             plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
@@ -357,8 +389,8 @@ with tab1:
             plt.legend()
 
             # Set plot title and labels
-            plt.xlabel("Timestamp")
-            plt.ylabel("CMG")
+            plt.xlabel("Fecha")
+            plt.ylabel("CMg")
 
             # Show the plot
             st.pyplot(plt.gcf())
@@ -367,16 +399,19 @@ with tab1:
         col1, col2 = st.columns((1, 1))
 
         with col1:
-            st.write('Tracking cmg_ponderado - DataFrame: Ultimas 5 horas')
-            st.dataframe(cmg_ponderado_48h.tail(10), use_container_width=True)
+            st.write('Tracking CMg ponderado - DataFrame: Ultimas 5 horas')
+            cmg_ponderado_96h['cmg_ponderado'] = cmg_ponderado_96h['cmg_ponderado'].round(2)
+            cmg_ponderado_96h['Central'] = cmg_ponderado_96h['barra_transmision'].replace({'CHARRUA__220':'Los Angeles' , 'QUILLOTA__220' : 'Quillota'})
+            cmg_ponderado_96h = cmg_ponderado_96h.rename(columns={'barra_transmision': 'Alimentador', 'timestamp' : 'Fecha y Hora', 'cmg_ponderado' : 'CMg Ponderado'})
+            st.dataframe(cmg_ponderado_96h.tail(10), use_container_width=True)
 
         with col2:
             st.write('Ultimos movimientos Encendido/Apagado')
-            st.dataframe(df_central, use_container_width=True)
+            st.dataframe(merged_df)
 
 
 with tab2:
-    st.header("Modificacion de Parametros")
+    st.header("Modificación de Parametros")
     col_a, col_b = st.columns((1, 2))
    
     with col_a:
@@ -427,5 +462,3 @@ with st.container():
 
     HEADER_TITLE = '<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Blue; font-size:1rem;"> <a href="https://github.com/CFVALLS">Author: Cristian Valls </a></p>'
     st.markdown(HEADER_TITLE, unsafe_allow_html=True)
-
-    
