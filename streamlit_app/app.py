@@ -9,7 +9,6 @@ import pytz
 import logging
 from datetime import date, datetime
 import requests
-from dotenv import load_dotenv
 import seaborn as sns
 import matplotlib.pyplot as plt
 import connection as cn
