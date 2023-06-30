@@ -6,10 +6,10 @@ import pandas as pd
 import json
 import time
 import pytz
-
-from datetime import datetime
+import logging
+from datetime import date, datetime
 import requests
-
+from dotenv import load_dotenv
 import seaborn as sns
 import matplotlib.pyplot as plt
 import connection as cn
@@ -271,7 +271,7 @@ if not cmg_online:
 #########################################################
 ################### WEBSITE DESIGN ######################
 #########################################################
-tab1, tab2 = st.tabs(["Monitoreo", "Atributos"])
+tab1, tab2, tab3 = st.tabs(["Monitoreo", "Atributos", "Descarga Archivos"])
 
 with tab1:
     st.header("Monitoreo")
@@ -331,7 +331,7 @@ with tab1:
 
         m1, m2  = st.columns(2)
         m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
+        m2.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Charrua']),2))
         st.metric("Central referencia", central_referencia_charrua)
 
 
@@ -362,7 +362,7 @@ with tab1:
        
         m1, m2  = st.columns(2)
         m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
+        m2.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Quillota']),2))
         st.metric("Central referencia", central_referencia_quillota)
 
 
@@ -452,6 +452,39 @@ with tab2:
     with col_b:
         st.write('Ultimos cambios de atributos')
         st.dataframe(df_central_mod)
+
+
+
+
+with tab3:
+    date_calculate = st.date_input(
+        "Seleccionar periodo CMg ponderados para descargar",
+        value=datetime(2023, 6, 6).date(),
+        min_value=datetime(2023, 5, 1).date(),
+        max_value=datetime.now().date()
+    )
+
+    # Convert date_calculate to a Unix timestamp
+    datetime_obj = datetime.combine(date_calculate, datetime.min.time())
+    unix_timestamp = int(datetime_obj.timestamp())
+    horas_delta = (unixtime - unix_timestamp) / 3600
+
+    with cn.establecer_session(engine) as session:
+        cmg_ponderado_descarga = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, horas_delta))
+
+    @st.cache
+    def convert_df(df):
+        # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        return df.to_csv().encode('utf-8')
+
+    csv = convert_df(cmg_ponderado_descarga)
+
+    st.download_button(
+        label="Descargar costos calculados como CSV",
+        data=csv,
+        file_name='costos_programados.csv',
+        mime='text/csv'
+    )
 
 
 ################## footer ##################
