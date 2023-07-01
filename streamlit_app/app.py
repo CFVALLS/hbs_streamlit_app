@@ -267,6 +267,7 @@ if not cmg_online:
     cmg_online = {'Charrua': 'Not Available', 'Quillota': 'Not Available'}
 
 
+
 #########################################################
 ################### WEBSITE DESIGN ######################
 #########################################################
@@ -329,8 +330,9 @@ with tab1:
 
 
         m1, m2  = st.columns(2)
+
         m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-        m2.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Charrua']),2))
+        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
         st.metric("Central referencia", central_referencia_charrua)
 
 
@@ -361,7 +363,7 @@ with tab1:
        
         m1, m2  = st.columns(2)
         m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-        m2.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Quillota']),2))
+        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
         st.metric("Central referencia", central_referencia_quillota)
 
 
