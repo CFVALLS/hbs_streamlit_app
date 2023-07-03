@@ -265,8 +265,8 @@ cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, ba
 # check if cmg_online is empty
 if not cmg_online:
     cmg_online = {'Charrua': 'Not Available', 'Quillota': 'Not Available'}
-
-
+else:
+    cmg_online = {key : round(cmg_online[key], 2) for key in cmg_online}
 
 #########################################################
 ################### WEBSITE DESIGN ######################
@@ -295,8 +295,6 @@ with tab1:
         st.markdown(CONNECTION_MD, unsafe_allow_html=True)
 
         st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,unsafe_allow_html=True)
-
-
 
 
     ################## Body ##################
