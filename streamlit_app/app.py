@@ -152,6 +152,27 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
     except requests.RequestException as e:
         return {"error": f"Request failed: {e}"}
 
+def get_cmg_programados(name_central, date_in):
+    """
+    Retrieves the entry for the central in the 'cmg_programados' table for the given date.
+
+    Args:
+        name_central (str): The name of the central.
+        date (str): The date in the format "YYYY-MM-DD".
+
+    Returns:
+        dict: A dictionary containing the central entry's information for the given date.
+              If no entry is found, an error message is returned.
+    """
+    url = f"http://15.228.73.221:5000/cmg_programados/{name_central}/{date_in}"
+
+    response = requests.get(url, timeout= 10)
+    response_data = json.loads(response.text)
+
+    if response.status_code == 200:
+        return response_data
+    else:
+        return {"error": "Failed to retrieve central entry"}
 
 def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
 
@@ -259,7 +280,8 @@ with cn.establecer_session(engine) as session:
 
 
 ############# Queries externas #############
-
+cmg_programados_quillota = get_cmg_programados('Quillota' , date_in= fecha)
+cmg_programados_la = get_cmg_programados('Los Angeles' , date_in= fecha)
 cmg_online = get_costo_marginal_online_hora(fecha_gte=fecha, fecha_lte=fecha, barras=['Quillota' , 'Charrua'], hora_in=hora_redondeada, user_key=USER_KEY)
 
 # check if cmg_online is empty
@@ -360,9 +382,12 @@ with tab1:
 
        
         m1, m2  = st.columns(2)
-        m1.metric(label="Zona en desacople", value=afecto_desacople_quillota)
-        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
-        st.metric("Central referencia", central_referencia_quillota)
+        m1.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Quillota']),2))
+        m2.metric(f"Costo marginal Programado - {hora_redondeada}", cmg_programados_quillota[hora_redondeada])
+
+        m3, m4  = st.columns(2)
+        m3.metric("Central referencia", central_referencia_quillota)
+        m4.metric(label="Zona en desacople", value=afecto_desacople_quillota)
 
 
     ################## GRAFICO ##################
