@@ -58,7 +58,7 @@ hora = chile_datetime.strftime("%H:%M:%S")
 
 # round hora to nearest hour
 hora = hora.split(':')
-hora_redondeada = f'{hora[0]}:00:00'
+hora_redondeada = f'{hora[0]}:00'
 
 # get unixtime from datetime. 
 unixtime = int(time.mktime(chile_datetime.timetuple()))
