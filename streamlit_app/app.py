@@ -58,7 +58,8 @@ hora = chile_datetime.strftime("%H:%M:%S")
 
 # round hora to nearest hour
 hora = hora.split(':')
-hora_redondeada = f'{hora[0]}:00'
+hora_redondeada = f'{hora[0]}:00:00'
+hora_redondeada_cmg_programados = f'{hora[0]}:00'
 
 # get unixtime from datetime. 
 unixtime = int(time.mktime(chile_datetime.timetuple()))
@@ -383,7 +384,7 @@ with tab1:
        
         m1, m2  = st.columns(2)
         m1.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Quillota']),2))
-        m2.metric(f"Costo marginal Programado - {hora_redondeada}", cmg_programados_quillota[hora_redondeada])
+        m2.metric(f"Costo marginal Programado - {hora_redondeada}", cmg_programados_quillota[hora_redondeada_cmg_programados])
 
         m3, m4  = st.columns(2)
         m3.metric("Central referencia", central_referencia_quillota)
