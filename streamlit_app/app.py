@@ -349,12 +349,13 @@ with tab1:
             str_co_la= f'<p style="font-family:sans-serif; font-weight: bold; font-size:1.5rem;"> Costo Operacional - {costo_operacional_la} </p>'
             st.markdown(str_co_la, unsafe_allow_html=True)
 
-
         m1, m2  = st.columns(2)
+        m1.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
+        m2.metric(f"Costo marginal Programado - {hora_redondeada}", round(float(cmg_programados_la[hora_redondeada_cmg_programados]),2))
 
-        m1.metric(label="Zona en desacople", value=afecto_desacople_charrua)
-        m2.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
-        st.metric("Central referencia", central_referencia_charrua)
+        m3, m4  = st.columns(2)
+        m3.metric("Central referencia", central_referencia_charrua)
+        m4.metric(label="Zona en desacople", value=afecto_desacople_charrua)
 
 
     ################## DATOS Quillota ##############################################
@@ -384,7 +385,7 @@ with tab1:
        
         m1, m2  = st.columns(2)
         m1.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Quillota']),2))
-        m2.metric(f"Costo marginal Programado - {hora_redondeada}", cmg_programados_quillota[hora_redondeada_cmg_programados])
+        m2.metric(f"Costo marginal Programado - {hora_redondeada}", round(float(cmg_programados_quillota[hora_redondeada_cmg_programados]),2))
 
         m3, m4  = st.columns(2)
         m3.metric("Central referencia", central_referencia_quillota)
