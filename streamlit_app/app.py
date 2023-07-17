@@ -257,7 +257,7 @@ with cn.establecer_session(engine) as session:
 
     cmg_ponderado_la = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'CHARRUA__220']
     cmg_ponderado_quillota = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'QUILLOTA__220']
-    row_cmg_quillota = cmg_ponderado_quillota.iloc[-1]['costo_ponderado']
+    row_cmg_quillota = cmg_ponderado_quillota.iloc[-1]
 
 
     df_central_to_merge = df_central.copy()
