@@ -258,6 +258,7 @@ with cn.establecer_session(engine) as session:
     cmg_ponderado_la = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'CHARRUA__220']
     cmg_ponderado_quillota = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'QUILLOTA__220']
     row_cmg_quillota = cmg_ponderado_quillota.iloc[-1]['cmg_ponderado']
+    row_cmg_la = cmg_ponderado_la.iloc[-1]['cmg_ponderado']
 
 
     df_central_to_merge = df_central.copy()
@@ -349,7 +350,7 @@ with tab1:
 
         with col1_1:
 
-            str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMg Calculado - {cmg_charrua} </p>'
+            str_cmg_calculado_charrua= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMg Calculado - {row_cmg_la} </p>'
             st.markdown(str_cmg_calculado_charrua, unsafe_allow_html=True)
 
         with col2_1:
@@ -382,7 +383,7 @@ with tab1:
 
         with col1_1:
 
-            str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMg Calculado - {cmg_quillota} </p>'
+            str_cmg_calculado_quillota= f'<p style="font-family:sans-serif; font-weight: bold; color:#ff2400; font-size:1.5rem;"> CMg Calculado - {row_cmg_quillota} </p>'
             st.markdown(str_cmg_calculado_quillota, unsafe_allow_html=True)
 
         with col2_1:
@@ -528,4 +529,3 @@ with st.container():
 
     HEADER_TITLE = '<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Blue; font-size:1rem;"> <a href="https://github.com/CFVALLS">Author: Cristian Valls </a></p>'
     st.markdown(HEADER_TITLE, unsafe_allow_html=True)
-    st.write(row_cmg_quillota)
