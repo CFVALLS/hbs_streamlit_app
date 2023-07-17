@@ -255,6 +255,11 @@ with cn.establecer_session(engine) as session:
     cmg_ponderado[['fecha', 'hora']] = cmg_ponderado['timestamp'].str.split(' ', expand=True)
     cmg_ponderado['central'] = cmg_ponderado['barra_transmision'].replace({'CHARRUA__220':'Los Angeles' , 'QUILLOTA__220' : 'Quillota'})
 
+    cmg_ponderado_la = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'CHARRUA__220']
+    cmg_ponderado_quillota = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'QUILLOTA__220']
+    row_cmg_quillota = cmg_ponderado_quillota.iloc[-1]['costo_ponderado']
+
+
     df_central_to_merge = df_central.copy()
     df_central_to_merge[['fecha', 'hora']] = df_central_to_merge['fecha_registro'].str.split(' ', expand=True)
     df_central_to_merge['hora'] = pd.to_datetime(df_central_to_merge['hora']).dt.floor('H').dt.time
@@ -272,6 +277,8 @@ with cn.establecer_session(engine) as session:
     # Perform the merge on 'hora', 'fecha', and 'central' columns
     cmg_ponderado['hora'] = cmg_ponderado['hora'].astype(str)
     cmg_ponderado['fecha'] = cmg_ponderado['fecha'].astype(str)
+
+    
     df_central_to_merge['hora'] = df_central_to_merge['hora'].astype(str)
     df_central_to_merge['fecha'] = df_central_to_merge['fecha'].astype(str)
 
@@ -521,3 +528,4 @@ with st.container():
 
     HEADER_TITLE = '<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; color:Blue; font-size:1rem;"> <a href="https://github.com/CFVALLS">Author: Cristian Valls </a></p>'
     st.markdown(HEADER_TITLE, unsafe_allow_html=True)
+    st.write(row_cmg_quillota)
