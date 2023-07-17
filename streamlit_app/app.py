@@ -384,7 +384,7 @@ with tab1:
 
        
         m1, m2  = st.columns(2)
-        m1.metric(f"Costo marginal Online - {hora_redondeada}", round(float(cmg_online['Quillota']),2))
+        m1.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Quillota'])
         m2.metric(f"Costo marginal Programado - {hora_redondeada}", round(float(cmg_programados_quillota[hora_redondeada_cmg_programados]),2))
 
         m3, m4  = st.columns(2)
