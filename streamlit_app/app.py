@@ -257,7 +257,7 @@ with cn.establecer_session(engine) as session:
 
     cmg_ponderado_la = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'CHARRUA__220']
     cmg_ponderado_quillota = cmg_ponderado[cmg_ponderado['barra_transmision'] == 'QUILLOTA__220']
-    row_cmg_quillota = cmg_ponderado_quillota.iloc[-1]['cmg_ponderado']
+    row_cmg_quillota = round(float(cmg_ponderado_quillota.iloc[-1]['cmg_ponderado']),2)
     row_cmg_la = cmg_ponderado_la.iloc[-1]['cmg_ponderado']
 
 
@@ -532,7 +532,7 @@ with tab3:
     )
 
     csv_2 = convert_df(cmg_tiempo_real_descarga)
-    
+
     st.download_button(
         label="Descargar costos marginales en tiempo real",
         data=csv_2,
