@@ -443,6 +443,7 @@ with tab1:
             st.write('Ultimos movimientos Encendido/Apagado')
             st.dataframe(merged_df)
 
+################## Modificaci'on de parametros ##################
 
 with tab2:
     st.header("Modificación de Parametros")
@@ -488,9 +489,15 @@ with tab2:
         st.dataframe(df_central_mod)
 
 
-
+################## Descarga de Datos ##################
 
 with tab3:
+    central_seleccion = st.radio("Seleccionar central para descargar datos", ('Los Angeles', 'Quillota'))
+    if central_seleccion == 'Los Angeles':
+        SELECCIONAR = 'CHARRUA__220'
+    else:
+        SELECCIONAR = 'QUILLOTA__220'
+
     date_calculate = st.date_input(
         "Seleccionar periodo CMg ponderados para descargar",
         value=datetime(2023, 6, 6).date(),
@@ -501,25 +508,37 @@ with tab3:
     # Convert date_calculate to a Unix timestamp
     datetime_obj = datetime.combine(date_calculate, datetime.min.time())
     unix_timestamp = int(datetime_obj.timestamp())
+    unix_time_delta = unixtime - unix_timestamp
     horas_delta = (unixtime - unix_timestamp) / 3600
 
     with cn.establecer_session(engine) as session:
         cmg_ponderado_descarga = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, horas_delta))
+        cmg_tiempo_real_descarga = pd.DataFrame(cn.get_cmg_tiempo_real(session, unix_time_delta))
 
     @st.cache
     def convert_df(df):
+        'seleccionar central a descargar y convertir a csv'
         # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        df = df[df['barra_transmision'] == SELECCIONAR]
         return df.to_csv().encode('utf-8')
 
     csv = convert_df(cmg_ponderado_descarga)
 
     st.download_button(
-        label="Descargar costos calculados como CSV",
+        label="Descargar costos marginales ponderados por hora",
         data=csv,
         file_name='costos_programados.csv',
         mime='text/csv'
     )
 
+    csv_2 = convert_df(cmg_tiempo_real_descarga)
+    
+    st.download_button(
+        label="Descargar costos marginales en tiempo real",
+        data=csv_2,
+        file_name='costos_programados.csv',
+        mime='text/csv'
+    )
 
 ################## footer ##################
 

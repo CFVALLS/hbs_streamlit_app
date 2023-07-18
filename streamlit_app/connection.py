@@ -453,6 +453,31 @@ def query_previous_modification_tracking_coordinador(session_in):
             f"Error while getting previous modification: {exception}")
         return None
 
+def get_cmg_tiempo_real(session_in, unix_time_in):
+    try:
+        query = session_in.query(CmgTiempoReal).filter(CmgTiempoReal.unix_time >= unix_time_in).all()
+        entries = []
+        for row in query:
+            entry = {
+                'id_tracking': row.id_tracking,
+                'barra_transmision': row.barra_transmision,
+                'año': row.año,
+                'mes': row.mes,
+                'dia': row.dia,
+                'hora': row.hora,
+                'unix_time': row.unix_time,
+                'desacople_bool': row.desacople_bool,
+                'cmg': float(row.cmg),
+                'central_referencia': row.central_referencia
+            }
+            entries.append(entry)
+        return entries
+    
+    except Exception as e:
+        logging.error(f"Error while getting cmg_ponderado entries: {e}")
+        return None
+
+
 def evaluar_cmg_hora(session_in, unix_time_in, barra_transmision_in="CHARRUA__220"):
     """
     Obtiene el costo marginal horario promedio para una central dada en la base de datos.
