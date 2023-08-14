@@ -33,12 +33,8 @@ API_PORT = st.secrets["API"]["PORT"]
 
 
 # Establecer motor de base de datos
-engine, metadata = cn.establecer_engine(
-    DATABASE, USER, PASSWORD, HOST, PORT, verbose=True)
+engine, metadata = cn.establecer_engine(DATABASE, USER, PASSWORD, HOST, PORT, verbose=True)
 
-# Establecer motor de base de datos
-engine, metadata = cn.establecer_engine(
-    DATABASE, USER, PASSWORD, HOST, PORT, verbose=True)
 
 CONN_STATUS = engine is not None
 
@@ -194,6 +190,12 @@ def insert_central(name_central, editor, data, host=API_HOST, port=API_PORT):
         st.write(f"Request failed: {e}")
         return {"error": f"Request failed: {e}"}
 
+def reformat_to_iso(date_string):
+    # Parse the date_string using strptime with the given format
+    dt_object = datetime.strptime(date_string, '%d.%m.%y %H:%M:%S')
+    
+    # Return the reformatted string using strftime
+    return dt_object.strftime('%Y-%m-%d %H:%M:%S')
 
 
 #############################################################
@@ -239,16 +241,26 @@ with cn.establecer_session(engine) as session:
     estado_generacion_q = last_row_q[2]
 
     costo_operacional_la = round(float(last_row_la[8]),2)
+    costo_operacional_la_base = costo_operacional_la - round(float(last_row_la[10]),2)
     costo_operacional_q = round(float(last_row_q[8]),2)
-
+    costo_operacional_q_base = costo_operacional_q - round(float(last_row_q[10]),2)
 
     # Consultar ultimas entradas de table Central: 
-    df_central = cn.query_central_table(session, num_entries= 10)
+    df_central = cn.query_central_table(session, num_entries= 20)
     df_central['margen_garantia'] = df_central['margen_garantia'].astype(float)
-    df_central_mod = cn.query_central_table_modifications(session, num_entries= 10)
+    df_central_mod = cn.query_central_table_modifications(session, num_entries= 20)
     df_central_mod['margen_garantia'] = df_central_mod['margen_garantia'].astype(float)
+    df_central_mod_co = df_central_mod.loc[:,['nombre' , 'costo_operacional','fecha_registro']]
+    df_central_mod_co['fecha_registro'] = df_central_mod_co['fecha_registro'].apply(reformat_to_iso)
+    # Eliminar todas las entradas que tenga mas de 96 horas.
+    df_central_mod_co['fecha_registro'] = pd.to_datetime(df_central_mod_co['fecha_registro'], format='%Y-%m-%d %H:%M:%S')
 
+    # Filter out rows where the date is more than 4 days ago
+    four_days_ago = chile_datetime - timedelta(days=4)
+    four_days_ago = four_days_ago.replace(tzinfo=None)    
 
+    filtered_df = df_central_mod_co[df_central_mod_co['fecha_registro'] > four_days_ago]
+    
     # Hacer merge entre df_central y cmg_ponderado
     cmg_ponderado = cmg_ponderado_96h.copy()
     cmg_ponderado['timestamp'] = cmg_ponderado['timestamp'].astype(str)
@@ -287,7 +299,7 @@ with cn.establecer_session(engine) as session:
     merged_df.drop(['timestamp', 'fecha_registro', 'external_update', 'editor', 'barra_transmision','id'], axis=1, inplace=True)
     merged_df = merged_df[['central','costo_operacional','generando','cmg_ponderado','fecha', 'hora','margen_garantia','factor_motor','tasa_proveedor', 'porcentaje_brent', 'tasa_central', 'precio_brent','fecha_referencia_brent' ]]
 
-
+  
 ############# Queries externas #############
 cmg_programados_quillota = get_cmg_programados('Quillota' , date_in= fecha)
 cmg_programados_la = get_cmg_programados('Los Angeles' , date_in= fecha)
@@ -404,23 +416,41 @@ with tab1:
 
     with st.container():
 
+        costo_operacional_plot_lineas_la = False
+        costo_operacional_plot_lineas_quillota = False
+        if filtered_df.empty:
+            costo_operacional_plot_lineas_quillota = True
+            costo_operacional_plot_lineas_la = True
+        else:
+            cmg_ponderado_96h = pd.concat([cmg_ponderado_96h, filtered_df], axis=1)
+            if filtered_df[filtered_df['nombre'] == 'Quillota'].empty:
+                costo_operacional_plot_lineas_quillota = True
+            if filtered_df[filtered_df['nombre'] == 'Los Angeles'].empty:   
+                costo_operacional_plot_lineas_la = True
+
         st.markdown("""<hr style="height:3px; border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True)
 
         col_left, col_center, col_right = st.columns([1,4,1])
 
         with col_center:
-
             # Create the Seaborn lineplot
             plt.figure(figsize=(10, 6))
-            sns.lineplot(data=cmg_ponderado_96h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision", markers=True)
-            
-            # add two horizontal lines
-            plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
-            plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+            sns.lineplot(data=cmg_ponderado_96h, x="timestamp", y="cmg_ponderado", hue="barra_transmision", style="barra_transmision")
 
-            # Manually add the legend
-            plt.legend()
+            # Set y-axis limits
+            max_value = max(cmg_ponderado_96h["cmg_ponderado"].max(), costo_operacional_la, costo_operacional_q)
+            margin = 2
+            plt.ylim(0, max_value + margin)
+
+            # add two horizontal lines
+            if costo_operacional_plot_lineas_quillota:
+                plt.axhline(y=costo_operacional_q, color='b', linestyle='--', label='CO - Quillota')
+            if costo_operacional_plot_lineas_la:
+                plt.axhline(y=costo_operacional_la, color='r', linestyle='--', label='CO - Los Angeles')
+
+            # Move legend outside the plot
+            plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
 
             # Set plot title and labels
             plt.xlabel("Fecha")
@@ -428,7 +458,7 @@ with tab1:
 
             # Show the plot
             st.pyplot(plt.gcf())
-    
+
 
         col1, col2 = st.columns((1, 1))
 
@@ -485,6 +515,13 @@ with tab2:
                 st.error(f'Error occurred during insert: {error}')
     
     with col_b:
+
+        la_co_sin_margen = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.1rem;"> Los Angeles - Costo Operacional Basal: {costo_operacional_la_base}</a></p>'
+        st.markdown(la_co_sin_margen, unsafe_allow_html=True)
+        
+        quillota_co_sin_margen = f'<p style="font-family:sans-serif; font-weight: bold; text-align: left; vertical-align: text-bottom; font-size:1.1rem;"> Quillota - Costo Operacional Basal: {costo_operacional_q_base}</a></p>'
+        st.markdown(quillota_co_sin_margen, unsafe_allow_html=True)
+
         st.write('Ultimos cambios de atributos')
         st.dataframe(df_central_mod)
 
@@ -515,7 +552,7 @@ with tab3:
         cmg_ponderado_descarga = pd.DataFrame(cn.query_cmg_ponderado_by_time(session, unixtime, horas_delta))
         cmg_tiempo_real_descarga = pd.DataFrame(cn.get_cmg_tiempo_real(session, unix_time_delta))
 
-    @st.cache
+    @st.cache_data
     def convert_df(df):
         'seleccionar central a descargar y convertir a csv'
         # IMPORTANT: Cache the conversion to prevent computation on every rerun
