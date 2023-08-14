@@ -7,7 +7,7 @@ import json
 import time
 import pytz
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import requests
 import seaborn as sns
 import matplotlib.pyplot as plt
