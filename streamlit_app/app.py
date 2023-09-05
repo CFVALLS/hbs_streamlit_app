@@ -373,7 +373,11 @@ with tab1:
 
         m1, m2  = st.columns(2)
         m1.metric(f"Costo marginal Online - {hora_redondeada}", cmg_online['Charrua'])
-        m2.metric(f"Costo marginal Programado - {hora_redondeada}", round(float(cmg_programados_la[hora_redondeada_cmg_programados]),2))
+        if hora_redondeada_cmg_programados in cmg_programados_la:
+            m2.metric(f"Costo marginal Programado - {hora_redondeada}", round(float(cmg_programados_la[hora_redondeada_cmg_programados]),2))
+        else:
+            st.error(f"Data for time {hora_redondeada_cmg_programados} not found in cmg_programados_la.")
+
 
         m3, m4  = st.columns(2)
         m3.metric("Central referencia", central_referencia_charrua)
