@@ -57,8 +57,8 @@ hora = hora.split(':')
 hora_redondeada = f'{hora[0]}:00:00'
 hora_redondeada_cmg_programados = f'{hora[0]}:00'
 
-# get unixtime from datetime. 
-unixtime = int(time.mktime(chile_datetime.timetuple()))
+naive_datetime = chile_datetime.astimezone().replace(tzinfo=None)
+unixtime = int(time.mktime(naive_datetime.timetuple()))
 
 def get_json_costo_marginal_online(fecha_gte, fecha_lte, barras, user_key=USER_KEY , verbose=False):
     """ Realiza un request para obtener costos marginales de las barras ingresadas. Devuelve una lista de diccionarios con
