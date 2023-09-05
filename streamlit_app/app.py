@@ -275,7 +275,9 @@ with cn.establecer_session(engine) as session:
 
     df_central_to_merge = df_central.copy()
     df_central_to_merge[['fecha', 'hora']] = df_central_to_merge['fecha_registro'].str.split(' ', expand=True)
-    df_central_to_merge['hora'] = pd.to_datetime(df_central_to_merge['hora']).dt.floor('H').dt.time
+    # df_central_to_merge['hora'] = pd.to_datetime(df_central_to_merge['hora']).dt.floor('H').dt.time
+    df_central_to_merge['hora'] = pd.to_datetime(df_central_to_merge['hora'], format='%H:%M:%S').dt.floor('H').dt.time
+
 
     # Reformat the 'fecha' column in cmg_ponderado
     cmg_ponderado['fecha'] = pd.to_datetime(cmg_ponderado['fecha'], format='%Y-%m-%d')
