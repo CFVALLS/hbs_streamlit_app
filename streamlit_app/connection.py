@@ -8,6 +8,7 @@ Description: Script para establecer conexion con base de datos MySQL
 import os
 import numpy as np
 import pandas as pd
+import logging
 from datetime import timedelta
 
 # mysql
