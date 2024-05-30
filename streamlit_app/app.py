@@ -149,7 +149,7 @@ def get_central(name_central, host=API_HOST, port=API_PORT):
     except requests.RequestException as e:
         return {"error": f"Request failed: {e}"}
 
-def get_cmg_programados(name_central, date_in):
+def get_cmg_programados(name_central, date_in, host=API_HOST, port=API_PORT):
     """
     Retrieves the entry for the central in the 'cmg_programados' table for the given date.
 
@@ -161,7 +161,7 @@ def get_cmg_programados(name_central, date_in):
         dict: A dictionary containing the central entry's information for the given date.
               If no entry is found, an error message is returned.
     """
-    url = f"http://15.228.73.221:5000/cmg_programados/{name_central}/{date_in}"
+    url = f"http://{host}:{port}/cmg_programados/{name_central}/{date_in}"
 
     response = requests.get(url, timeout= 10)
     response_data = json.loads(response.text)
